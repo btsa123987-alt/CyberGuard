@@ -1,193 +1,71 @@
-<div align="center">
-  <img src="static/favicon.svg" alt="CyberGuard logo" width="78" />
+# CyberGuard
 
-# CyberGuard · QR & URL Security Analyzer
+**English-only URL & QR code risk analyzer.** Inspect suspicious web addresses without visiting them, and see why they were flagged.
 
-**Explainable phishing indicators · Offline-by-design · Arabic & English**
+> **Important:** CyberGuard is a local educational tool. Risk scores are explainable rules, **not AI probabilities** or proof that a website is safe. It does **not** visit scanned websites.
 
-![Python](https://img.shields.io/badge/Python-3.11%2B-3776AB?logo=python&logoColor=white)
-![Flask](https://img.shields.io/badge/Flask-3.x-141e2d?logo=flask&logoColor=white)
-![License](https://img.shields.io/badge/License-MIT-3cdadf)
-![Security](https://img.shields.io/badge/URL_scanning-no_outbound_requests-42d6a2)
+## Start on Windows — one click
 
-</div>
+1. Download this repository: **Code → Download ZIP**.
+2. Extract the ZIP file.
+3. Double-click **`RUN.bat`** inside the extracted `CyberGuard-main` folder.
+4. Wait for the packages to install on the first run. Keep the terminal window open.
+5. Open **http://127.0.0.1:5000** in your browser.
 
-> **Important:** CyberGuard is a cybersecurity education/portfolio tool for *structural URL risk indicators*. It is **not** a validated anti-phishing engine, a live reputation service, or a guarantee that a low-scoring URL is safe. The risk score is **heuristic points out of 100**, **not an AI confidence percentage**.
+**Requirements:** Python 3.11+ installed on Windows and internet access the first time you run it. To stop the server, press **Ctrl+C** in the terminal.
 
-**العربية:** CyberGuard أداة تعليمية لتحليل مؤشرات الروابط ورموز QR دون فتح الوجهة أو إرسالها لخدمات خارجية. درجة الخطورة توضيحية وليست احتمالًا إحصائيًا أو ضمانًا لسلامة الرابط. **[شرح المشروع بالعربية](docs/PROJECT_EXPLANATION_AR.md)** · **[دليل التشغيل والنشر على GitHub](docs/GITHUB_AR.md)**.
+### VS Code
 
-## ▶️ تشغيل CyberGuard بالنسخ واللصق — Windows (بدون Git)
-
-**أسرع طريقة على Windows:** افتحي **VS Code → Terminal → New Terminal**، وتأكدي أن الطرفية **PowerShell**. انسخي **مربع الكود كاملًا** والصقيه في الطرفية ثم اضغطي Enter. لا تلصقيه في صفحة GitHub نفسها.
-
-> المتطلبات: **Python 3.11 أو أحدث** مثبت، واتصال بالإنترنت في أول تشغيل. هذا الأمر ينزّل ملفات المشروع من مستودعك العام، ويضعها في **مجلد جديد** داخل حساب Windows (بدون تغيير ملفاتك القديمة)، وينشئ بيئة `.venv` ويثبت مكتبات `requirements.txt` ثم يبدأ Flask.
+Open the `CyberGuard-main` folder using **File → Open Folder**. Open the integrated **PowerShell terminal** and run:
 
 ```powershell
-$ErrorActionPreference = 'Stop'
-$folder = Join-Path $HOME ('CyberGuard-' + (Get-Date -Format 'yyyyMMdd-HHmmss-fff'))
-New-Item -ItemType Directory -Path $folder | Out-Null
-$zip = Join-Path $folder 'CyberGuard.zip'
-
-Invoke-WebRequest -Uri 'https://github.com/oull1i/CyberGuard/archive/refs/heads/main.zip' -OutFile $zip
-Expand-Archive -LiteralPath $zip -DestinationPath $folder
-Set-Location (Join-Path $folder 'CyberGuard-main')
-
-if (Get-Command py -ErrorAction SilentlyContinue) {
-    & py -3 scripts\vscode_setup.py
-} elseif (Get-Command python -ErrorAction SilentlyContinue) {
-    & python scripts\vscode_setup.py
-} else {
-    throw 'Install Python 3.11+ first, then restart VS Code.'
-}
-if ($LASTEXITCODE -ne 0) { throw 'Setup failed. See the message above.' }
-
-Write-Host 'CyberGuard is starting. Open http://127.0.0.1:5000' -ForegroundColor Green
-& .\.venv\Scripts\python.exe app.py
+.\RUN.bat
 ```
 
-عندما تظهر عبارة `Running on http://127.0.0.1:5000` افتحي **http://127.0.0.1:5000** في المتصفح. لإيقاف الخادم اضغطي `Ctrl+C` في الطرفية. إذا ظهر خطأ، انسخي نص الخطأ وأرسليه هنا.
+That's the only command you need. You do **not** need Git Clone, Docker, Node.js, or a UI design plugin.
 
-**🔎 [شرح كامل بالصور والخطوات والحلول](docs/COPY_PASTE_RUN_AR.md)**
-
-## ✨ CyberGuard V3 · Arabic-first Cyber Neon UI
-
-The dashboard has been redesigned with a premium RTL-first **Cyber Neon** interface, a built-in SVG security radar, an explainable risk gauge, a live session risk-distribution donut, and an SVG score timeline. Charts start empty and update from **actual scan results** only; they do not simulate incidents, traffic, or AI confidence.
-
-- **[UI/UX Pro Max design integration guide (Arabic)](docs/UIUX_PRO_MAX_AR.md)** — how to optionally install the upstream design skill in a supported assistant such as GitHub Copilot or Codex.
-- **[CyberGuard design-system specification](design-system/cyberguard/MASTER.md)** — semantic colors, RTL/LTR rules, accessibility, chart semantics, privacy, and interaction patterns.
-- **[Upstream UI/UX Pro Max](https://github.com/nextlevelbuilder/ui-ux-pro-max-skill)** — MIT-licensed design intelligence reference (not bundled in this repository). Its CLI is **optional** and not needed to run Flask.
-
-**Windows / VS Code:** Get the latest main branch, run CyberGuard with the existing F5 setup or the [copy-and-paste guide](docs/COPY_PASTE_RUN_AR.md), then visit **http://127.0.0.1:5000**. Existing GitHub clones can use Git Pull to update. ZIP users need the new ZIP and should not overwrite unrelated project folders.
-
-## 📘 Project at a glance
-
-| Question | Answer |
-| --- | --- |
-| What does it solve? | Helps users inspect structural phishing signals in a URL extracted from a QR image or entered as text. |
-| Does it open or visit suspicious links? | **No.** Analysis is offline and does not perform network lookups. |
-| Is the risk score AI confidence? | **No.** It is an explainable, deterministic heuristic score, not a trained-model probability. |
-| What makes this an engineering project? | Separated application layers, secure file handling, a documented REST API, automated checks, and container packaging. |
-
-## ✨ Features
-
-- **Arabic / English dashboard** — responsive dark interface, keyboard-friendly controls, URL paste, QR upload/drag-drop, live indicator breakdown, session counters, and JSON report export.
-- **Explainable rules** — 9 deterministic indicators: IP host, shorteners, possible brand impersonation, lookalike domains, punycode, deep subdomains, sensitive terms, unencrypted HTTP, and unusual ports.
-- **Private by default** — no requests to submitted URLs, no external CDNs or LLM calls, no URL/image storage, and disabled server-side history by default.
-- **Hardened image handling** — validated PNG/JPEG/WebP, 5-MiB payload limit and 8-million-pixel limit, with explicit errors for QR decoding issues.
-- **REST API** — error codes, health checks, optional redacted history, and request rate limiting.
-- **Testable deployment** — Flask app factory, offline engine, tests, GitHub Actions, Docker, Compose, security notes, and optional isolated XGBoost/SHAP research lab.
-
-## 🖥️ VS Code on Windows (one-key local launch)
-
-Open the repository in VS Code, install the recommended Python extension when prompted, select **CyberGuard: Run Flask (Windows)** in **Run and Debug**, then press **F5**. The first run prepares an isolated `.venv` and installs dependencies automatically. Open http://127.0.0.1:5000 after Flask starts.
-
-**[Step-by-step Arabic VS Code guide](docs/VS_CODE_AR.md)** · Requires Python 3.11+ and internet access for the first package installation.
-
-## 🚀 Quick start
-
-**Python 3.11+** is recommended.
+### Mac / Linux
 
 ```bash
-# 1) Clone your new GitHub repository (or unzip the downloaded project)
-git clone https://github.com/oull1i/CyberGuard.git
-cd CyberGuard
-
-# 2) Create and activate a virtual environment
-python -m venv .venv
-# Linux/macOS: source .venv/bin/activate
-# Windows PowerShell: .venv\Scripts\Activate.ps1
-
-# 3) Install and run
+python3 -m venv .venv
+. .venv/bin/activate
 python -m pip install -r requirements.txt
 python app.py
 ```
 
-Open **http://127.0.0.1:5000**. The local server binds to loopback by default and will not expose the app publicly.
+## Where is the code?
 
-### Run with Docker
+| File | Purpose |
+| --- | --- |
+| **`app.py`** | Flask server and API routes |
+| **`analyzer.py`** | URL parsing and explainable risk rules |
+| **`qr.py`** | Safe QR image decoding |
+| **`templates/index.html`** | Dashboard HTML (English) |
+| **`static/styles.css`** | Colors, layout, responsive design |
+| **`static/app.js`** | Buttons, charts, results, API calls |
+| **`RUN.bat`** | One-click Windows startup |
+| **`tests/test_app.py`** | Automated tests |
 
-```bash
-docker compose up --build
-```
+The remaining files are minimal project configuration, a license, and GitHub's automated test workflow. No extra scripts or language packs.
 
-Open **http://127.0.0.1:8000**. Compose publishes on localhost only, runs under a non-root account, drops Linux capabilities, and uses a read-only root filesystem.
+## Try a safe example
 
-## 🔍 API examples
+Enter `http://paypa1.example/verify/password` into **Scan URL** and press **Analyze URL**. This uses a reserved example domain; do **not** open it in your browser. Compare it with `https://example.com`. The dashboard updates from real session scans only.
 
-```bash
-curl http://127.0.0.1:5000/api/health
+Or upload one QR code image (PNG, JPG, or WebP, up to 5 MB).
 
-curl -X POST http://127.0.0.1:5000/api/analyze/url \
-  -H "Content-Type: application/json" \
-  -d '{"url":"http://paypa1.com/verify/password"}'
+## API
 
-curl -X POST http://127.0.0.1:5000/api/analyze/qr \
-  -F 'image=@sample-qr.png'
-```
+- `GET /api/health` — application health
+- `POST /api/analyze/url` — JSON: `{"url":"https://example.com"}`
+- `POST /api/analyze/qr` — multipart form: `image=<file>`
 
-Responses return `{ "success": true, "result": { ... } }` with the risk score, level, hostname, score contributions, explanations, and limitations. Detailed examples are in [docs/API.md](docs/API.md). For a complete walkthrough in Arabic, see [Project Explanation](docs/PROJECT_EXPLANATION_AR.md).
+Run tests with `python -m pip install pytest qrcode[pil]` followed by `python -m pytest tests -q` after installing the main dependencies.
 
-## 🧪 Test and quality checks
+**Privacy:** Scanned links are never fetched. Session history stays in the page's memory and disappears when you refresh. This version does not save scans to disk or send them to third parties.
 
-```bash
-python -m pip install -r requirements-dev.txt
-python -m pytest tests -q
-ruff check cyberguard tests scripts app.py
-```
+**Limitations:** Rules cannot confirm whether a site is malicious or safe, detect every phishing page, or substitute for security products. Public deployment requires additional protection and review; the default listener is localhost-only.
 
-GitHub Actions runs tests against Python 3.11, 3.12, 3.13 and builds a container image. A private-only local environment may lack packages required for integration tests; CI installs them.
+## License
 
-## 🧱 Project architecture
-
-```text
-CyberGuard/
-├── app.py                    # Local dev entry point / WSGI export
-├── cyberguard/
-│   ├── __init__.py           # Lazy Flask app factory
-│   ├── server.py             # API, limits, headers, rate limiting
-│   ├── analyzer.py           # Pure URL validation and risk engine
-│   └── qr.py                 # Safe image checks and QR decoder
-├── templates/index.html      # Arabic/English dashboard
-├── static/styles.css         # Responsive UI
-├── static/app.js             # UI interactions; no remote libraries
-├── static/favicon.svg
-├── tests/                    # URL, QR and API integration tests
-├── scripts/ml_experiment.py  # OPTIONAL genuine ML/SHAP lab
-├── docs/                     # API, security model, research notes
-├── .github/workflows/ci.yml
-├── Dockerfile
-├── compose.yaml
-├── requirements*.txt
-├── pyproject.toml
-├── LICENSE
-└── README.md
-```
-
-## 🧠 About the AI / ML component
-
-**The live result is rule-based, not generated by a trained XGBoost classifier.** Earlier prototypes sometimes presented rule weights as "SHAP" or classification confidence, which is incorrect. Rather than make unsupported model claims, this version shows each active rule and its explicit point contribution. The optional [XGBoost + true SHAP research script](docs/ML_RESEARCH.md) uses a *user-supplied labeled dataset* and never affects live scoring or transmits URLs. You can build a real calibrated predictive model once you have ethically sourced, independently evaluated data.
-
-## 🔐 Security considerations
-
-The detector never connects to a scanned website, avoiding SSRF from link-following. Validation, response headers, file limits, and safe DOM rendering reduce common risks but **do not eliminate all threats**. Native image codecs and public-facing API endpoints require additional hardening, gateway-based rate limiting, HTTPS termination, resource caps, monitoring, and deployment review. See [docs/SECURITY.md](docs/SECURITY.md).
-
-Server-side history is disabled by default. To opt in locally, set `CYBERGUARD_HISTORY=1`; it saves only hostnames, risk levels, scores, and timestamps, per worker, in memory. The browser shows an ephemeral session history without persisting complete scanned URLs.
-
-## 🗺️ Suggested roadmap
-
-- [ ] Source and independently label real-world URL data with proper rights and provenance.
-- [ ] Validate detection on chronological domain-disjoint holdouts, calibrate probabilities, and report uncertainty.
-- [ ] Conduct a security review, fuzz-test image decoding, add production gateway policies, and threat-model auth if introduced.
-- [ ] Add end-to-end browser accessibility checks and optional RTL visual regression screenshots.
-
-## 📦 Publishing to GitHub
-
-The ZIP file is a delivery package: **extract it and commit its contents**, not the ZIP itself. Create a blank repository first, then use Git or the documented upload flow. See [Arabic GitHub publishing guide](docs/GITHUB_AR.md), including a Windows PowerShell helper at `scripts/publish_github.ps1`, suggested repository topics, Actions verification, and portfolio descriptions.
-
-## 🤝 Contributing & license
-
-See [CONTRIBUTING.md](CONTRIBUTING.md). Released under the [MIT License](LICENSE), subject to your ownership/rights to all project code and assets.
-
----
-
-*Built to demonstrate secure engineering and clear security explanations, not inflated model-accuracy claims.*
+MIT — see [LICENSE](LICENSE).

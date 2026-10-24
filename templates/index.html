@@ -1,134 +1,125 @@
 <!doctype html>
-<html lang="ar" dir="rtl">
+<html lang="en" dir="ltr">
 <head>
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
-  <meta name="description" content="CyberGuard: explainable, offline security indicators for links and QR codes.">
-  <meta name="color-scheme" content="dark">
-  <title>CyberGuard | مركز تحليل الروابط و QR</title>
-  <link rel="icon" href="/static/favicon.svg" type="image/svg+xml">
+  <meta name="description" content="CyberGuard: an explainable URL and QR code risk analyzer that runs locally.">
+  <meta name="theme-color" content="#080f1d">
+  <title>CyberGuard — Security Risk Scanner</title>
   <link rel="stylesheet" href="/static/styles.css">
-  <script defer src="/static/app.js"></script>
+  <script src="/static/app.js" defer></script>
 </head>
 <body>
-  <div class="app-shell">
-    <aside class="sidebar" aria-label="القائمة الجانبية">
+  <div class="shell">
+    <header class="topbar">
       <a class="brand" href="/" aria-label="CyberGuard home">
-        <span class="brand-icon" aria-hidden="true"><svg viewBox="0 0 44 44" fill="none"><path d="M22 4 37 12.5v19L22 40 7 31.5v-19L22 4Z" stroke="currentColor" stroke-width="1.6"/><path d="m14 22 5 5 11-12" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"/></svg></span>
-        <span><strong>Cyber<span>Guard</span></strong><small>CYBER DEFENSE / LAB</small></span>
+        <span class="brand-symbol" aria-hidden="true">
+          <svg viewBox="0 0 40 40" fill="none"><path d="m20 4 14 7v11c0 8-5.7 13.2-14 16C11.7 35.2 6 30 6 22V11l14-7Z" stroke="currentColor" stroke-width="2"/><path d="m13 20 5 5 9-10" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2.6"/></svg>
+        </span>
+        <span><strong>Cyber<span>Guard</span></strong><small>SECURITY ANALYSIS</small></span>
       </a>
-      <div class="sidebar-section"><span class="eyebrow">مساحة العمل / WORKSPACE</span>
-        <a class="nav-link active" href="#scanner"><span class="nav-symbol" aria-hidden="true">⌖</span> <span data-i18n="navScanner">مركز الفحص</span></a>
-        <a class="nav-link" href="#explanation"><span class="nav-symbol" aria-hidden="true">◈</span> <span data-i18n="navInsights">تفسير النتائج</span></a>
-        <a class="nav-link" href="#activity"><span class="nav-symbol" aria-hidden="true">▤</span> <span data-i18n="navActivity">سجل الجلسة</span></a>
+      <div class="header-actions">
+        <span class="system-status"><span class="live-dot"></span> Engine online <span class="status-extra">· Local-only</span></span>
+        <a class="header-link" href="#how-it-works">How it works <span aria-hidden="true">↗</span></a>
       </div>
-      <div class="side-panel">
-        <span class="status-dot"></span><strong data-i18n="offline">وضع التحليل المحلي</strong>
-        <p data-i18n="privacy">لا يفتح النظام الروابط التي تحللينها، ولا يرسلها لأي خدمة خارجية.</p>
-      </div>
-      <div class="side-footer"><div>CYBERGUARD / V3.0</div><div>Built for security learning</div></div>
-    </aside>
+    </header>
 
-    <div class="content">
-      <header class="topbar">
-        <div class="breadcrumbs"><span class="breadcrumbs-root">CYBERGUARD</span><span class="breadcrumbs-sep">/</span><b data-i18n="breadcrumb">لوحة التحكم</b></div>
-        <div class="header-right"><span class="live-chip"><span class="status-dot"></span> <span data-i18n="engine">RULE ENGINE ACTIVE</span></span>
-          <button id="language" class="lang-button" type="button" aria-label="Switch language">EN</button>
+    <main>
+      <section class="hero" aria-label="Introduction">
+        <div class="hero-copy">
+          <div class="eyebrow"><span class="eyebrow-line"></span> CYBERGUARD / SCANNER v3</div>
+          <h1>Know the risk.<br><span>Before you click.</span></h1>
+          <p>Analyze suspicious URLs and QR codes in seconds. Explore clear risk signals and practical next steps — without visiting the link.</p>
+          <div class="hero-features"><span><span class="feature-icon">✓</span> Explainable results</span><span><span class="feature-icon">✓</span> No URL visits</span><span><span class="feature-icon">✓</span> Private by default</span></div>
+          <a class="hero-button" href="#scanner">Start scanning <span aria-hidden="true">↘</span></a>
         </div>
-      </header>
+        <div class="hero-art" aria-hidden="true">
+          <div class="orb-glow"></div>
+          <svg class="radar" viewBox="0 0 360 360" fill="none" role="presentation">
+            <circle cx="180" cy="180" r="152" stroke="#42dace" stroke-opacity=".25" stroke-dasharray="4 12"/>
+            <circle cx="180" cy="180" r="116" stroke="#42dace" stroke-opacity=".18"/>
+            <circle cx="180" cy="180" r="79" stroke="#42dace" stroke-opacity=".24"/>
+            <path d="M180 16v328M16 180h328M64 64l232 232M296 64 64 296" stroke="#42dace" stroke-opacity=".12"/>
+            <circle cx="180" cy="180" r="138" stroke="#42dace" stroke-opacity=".15" stroke-width="24"/>
+            <path d="M180 93 247 128v57c0 52-34 82-67 98-33-16-67-46-67-98v-57l67-35Z" fill="#0c2934" stroke="#69f3dc" stroke-width="2.5"/>
+            <path d="m146 181 24 24 46-49" stroke="#89ffe5" stroke-linecap="round" stroke-linejoin="round" stroke-width="9"/>
+            <circle cx="319" cy="180" r="5" fill="#83ffe4"/><circle cx="76" cy="88" r="4" fill="#79e7e2"/>
+            <text x="35" y="80" fill="#74adae" font-size="11" letter-spacing="2">SCAN</text>
+            <text x="261" y="310" fill="#74adae" font-size="11" letter-spacing="2">SAFE FLOW</text>
+          </svg>
+          <span class="radar-label radar-label-left">SECURE ENGINE</span>
+          <span class="radar-label radar-label-right">NO REMOTE REQUESTS</span>
+        </div>
+      </section>
 
-      <main id="scanner" class="dashboard">
-        <section class="hero" aria-labelledby="heroHeadline">
-          <div class="hero-body">
-            <div class="kicker"><span class="pulse-dot"></span><span data-i18n="heroEyebrow">مركز التحليل الأمني • CYBER SECURITY OPERATIONS</span></div>
-            <h1 id="heroHeadline" data-i18n="heroTitle">حلّل الرابط قبل <em>الضغط عليه.</em></h1>
-            <p data-i18n="heroText">افحص مؤشرات التصيّد في الروابط ورموز QR، وافهم أسباب الخطورة دون فتح الوجهة أو مشاركة بياناتك.</p>
-            <div class="hero-meta"><span class="hero-meta-item"><i class="hero-meta-dot"></i><span data-i18n="heroFeature1">خصوصية افتراضية</span></span><span class="hero-meta-item"><i class="hero-meta-dot"></i><span data-i18n="heroFeature2">تفسير كل مؤشر</span></span></div>
-            <a class="hero-cta" href="#scanHeading"><span data-i18n="heroAction">ابدأ فحصًا جديدًا</span><span aria-hidden="true">↖</span></a>
-          </div>
-          <div class="hero-decoration" aria-hidden="true">
-            <svg class="radar-svg" viewBox="0 0 400 310" fill="none" xmlns="http://www.w3.org/2000/svg">
-              <defs><linearGradient id="radarLine" x1="0" y1="0" x2="400" y2="320"><stop stop-color="#65F6DE"/><stop offset="1" stop-color="#617FFF"/></linearGradient><radialGradient id="radarGlow"><stop stop-color="#36E5CB" stop-opacity=".25"/><stop offset="1" stop-color="#36E5CB" stop-opacity="0"/></radialGradient></defs>
-              <circle cx="196" cy="156" r="148" fill="url(#radarGlow)"/>
-              <g stroke="#65E8D8" stroke-opacity=".19" stroke-width="1"><circle cx="196" cy="156" r="50"/><circle cx="196" cy="156" r="91"/><circle cx="196" cy="156" r="132"/><path d="M60 156h272M196 20v272M99 60l194 194M293 60 99 254"/></g>
-              <circle cx="196" cy="156" r="111" stroke="url(#radarLine)" stroke-width="1.5" stroke-dasharray="7 11" opacity=".7" class="radar-outer"/>
-              <path d="M196 74 261 107v58c0 50-36 85-65 100-29-15-65-50-65-100v-58l65-33Z" fill="#0B2239" stroke="url(#radarLine)" stroke-width="2.5"/><path d="m163 165 23 22 45-48" stroke="#79FFE7" stroke-width="8" stroke-linecap="round" stroke-linejoin="round"/>
-              <g fill="#89FFE5"><circle cx="328" cy="156" r="5"/><circle cx="79" cy="97" r="4"/><circle cx="274" cy="69" r="4"/></g>
-              <g font-size="10" font-family="monospace" fill="#A0DACC" letter-spacing="1"><text x="22" y="89">SECURE</text><text x="277" y="264">SCAN / 01</text><text x="23" y="257">NO FETCH</text></g>
-              <path d="M85 101h50M253 71h48M288 255h55" stroke="#52E0D0" stroke-opacity=".6" stroke-dasharray="3 4"/>
-            </svg>
-            <div class="radar-caption"><span class="status-dot"></span> <span data-i18n="radarLabel">محرك تحليل جاهز</span></div>
-          </div>
-        </section>
+      <section class="metric-row" aria-label="Live session analytics">
+        <div class="metric"><div class="metric-top"><span>Total scans</span><span class="metric-icon">↗</span></div><strong id="scanCount">0</strong><small>This browser session</small></div>
+        <div class="metric"><div class="metric-top"><span>High-risk scans</span><span class="metric-icon red">⚑</span></div><strong id="highCount">0</strong><small>Requires extra caution</small></div>
+        <div class="metric"><div class="metric-top"><span>Average risk score</span><span class="metric-icon">◈</span></div><strong><span id="averageScore">0</span><span class="metric-suffix"> / 100</span></strong><small>Heuristic points, not probability</small></div>
+      </section>
 
-        <section class="stat-row" aria-label="Platform summary">
-          <div class="stat"><div class="stat-top"><span data-i18n="scans">فحوصات الجلسة</span><i>◈</i></div><strong id="totalScans">00</strong><small data-i18n="sessionOnly">في هذه الصفحة فقط</small></div>
-          <div class="stat"><div class="stat-top"><span data-i18n="high">مخاطر مرتفعة</span><i class="danger">⚑</i></div><strong id="highCount">00</strong><small data-i18n="flagged">من نتائج الجلسة</small></div>
-          <div class="stat"><div class="stat-top"><span data-i18n="engineType">محرك التحليل</span><i class="cyan">⌘</i></div><strong class="stat-word">9 <span data-i18n="signals">مؤشرات</span></strong><small data-i18n="rules">قواعد واضحة وقابلة للتفسير</small></div>
-          <div class="stat"><div class="stat-top"><span data-i18n="external">طلبات خارجية</span><i class="green">◎</i></div><strong>0</strong><small data-i18n="noVisits">دون زيارة الروابط المرسلة</small></div>
-        </section>
-
-        <div class="main-grid"><section class="panel scan-panel" aria-labelledby="scanHeading">
-          <div class="panel-heading"><div><span class="eyebrow">01 / SCANNER</span><h2 id="scanHeading" data-i18n="scanHeading">فحص جديد</h2></div><span class="outline-chip" data-i18n="staticAnalysis">تحليل محلي</span></div>
-          <div class="tabs" role="tablist" aria-label="Scan type">
-            <button class="tab selected" id="urlTab" type="button" role="tab" aria-selected="true" aria-controls="urlPane"><svg viewBox="0 0 24 24" fill="none" aria-hidden="true"><path d="M10 13.5a4 4 0 0 0 6.8 1.4l2.3-2.3a4 4 0 0 0-5.7-5.7l-1.3 1.3M14 10.5a4 4 0 0 0-6.8-1.4l-2.3 2.3a4 4 0 0 0 5.7 5.7l1.3-1.3" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/></svg><span data-i18n="urlTab">فحص رابط</span></button>
-            <button class="tab" id="qrTab" type="button" role="tab" aria-selected="false" aria-controls="qrPane"><svg viewBox="0 0 24 24" fill="none" aria-hidden="true"><path d="M3 3h7v7H3zM14 3h7v7h-7zM3 14h7v7H3zM6 6h1M17 6h1M6 17h1M14 14h3m4 0v3m-7 4v-3m3 0h4m-4 3h4" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/></svg><span data-i18n="qrTab">فحص QR</span></button>
+      <div class="workspace" id="scanner">
+        <section class="panel scanner" aria-labelledby="scannerTitle">
+          <div class="section-head"><div><span class="kicker">01 / START HERE</span><h2 id="scannerTitle">New security scan</h2></div><span class="pill"><span class="live-dot"></span> Ready</span></div>
+          <div class="tabs" role="tablist" aria-label="Scan input type">
+            <button id="urlTab" class="tab active" type="button" role="tab" aria-controls="urlPanel" aria-selected="true">↗ <span>Scan URL</span></button>
+            <button id="qrTab" class="tab" type="button" role="tab" aria-controls="qrPanel" aria-selected="false">▦ <span>Scan QR code</span></button>
           </div>
-          <form id="scanForm">
-            <div id="urlPane" role="tabpanel" aria-labelledby="urlTab"><label for="urlInput" class="field-label" data-i18n="urlLabel">الرابط المراد تحليله</label>
-              <div class="input-wrap"><span aria-hidden="true">⌁</span><input id="urlInput" name="url" type="url" inputmode="url" maxlength="2048" autocomplete="off" spellcheck="false" placeholder="https://example.com/verify" aria-describedby="urlHelp" required></div>
-              <p id="urlHelp" class="helper" data-i18n="urlHelp">أدخلي عنوانًا يبدأ بـ https:// أو http://. لا يتم فتح الرابط.</p>
+          <form id="scanForm" novalidate>
+            <div id="urlPanel" role="tabpanel" aria-labelledby="urlTab">
+              <label class="input-label" for="urlInput">Website address</label>
+              <div class="input-holder"><span class="input-symbol" aria-hidden="true">⌁</span><input id="urlInput" type="url" inputmode="url" maxlength="2048" autocomplete="off" spellcheck="false" placeholder="https://example.com" aria-describedby="urlHint"></div>
+              <p class="hint" id="urlHint">Enter a complete HTTP or HTTPS URL. We never open the website.</p>
+              <div class="examples"><span>Try:</span><button type="button" class="example" data-url="https://example.com">Low-signal example</button><button type="button" class="example" data-url="http://paypa1.example/verify/password">Suspicious example</button></div>
             </div>
-            <div id="qrPane" role="tabpanel" aria-labelledby="qrTab" hidden><label class="field-label" for="fileInput" data-i18n="uploadLabel">ارفعي صورة رمز QR</label>
-              <label id="dropZone" class="dropzone" for="fileInput"><span class="upload-icon" aria-hidden="true">▦</span><strong data-i18n="dropTitle">اختاري صورة أو اسحبيها هنا</strong><small data-i18n="dropHelp">PNG، JPG، WebP — حتى 5 MB</small><span id="fileName" class="filename"></span></label>
-              <input class="sr-only" id="fileInput" type="file" name="image" accept="image/png,image/jpeg,image/webp" aria-describedby="fileHelp"><p id="fileHelp" class="helper" data-i18n="qrHelp">يجب أن تحتوي الصورة على رمز QR واحد قابل للقراءة.</p>
+            <div id="qrPanel" role="tabpanel" aria-labelledby="qrTab" hidden>
+              <label class="input-label" for="qrFile">QR code image</label>
+              <label class="dropzone" id="dropzone" for="qrFile"><span class="drop-icon" aria-hidden="true">▦</span><strong>Choose a file or drag it here</strong><span>PNG, JPEG or WebP · Up to 5 MB</span><em id="fileName">No image selected</em></label>
+              <input id="qrFile" class="visually-hidden" type="file" accept="image/png,image/jpeg,image/webp" aria-describedby="qrHint">
+              <p class="hint" id="qrHint">The image must contain one readable QR code linking to a website.</p>
             </div>
-            <button id="scanButton" class="primary-button" type="submit"><svg viewBox="0 0 24 24" fill="none" aria-hidden="true"><path d="M12 2 20 6v6c0 5-3.3 8.4-8 10-4.7-1.6-8-5-8-10V6l8-4Z" stroke="currentColor" stroke-width="1.6"/><path d="m9 12 2 2 4-4" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg><span data-i18n="scanButton">ابدأ التحليل الأمني</span><span class="button-arrow" aria-hidden="true">←</span></button>
+            <button class="scan-action" id="scanButton" type="submit"><span id="scanButtonLabel">Analyze URL</span><span aria-hidden="true">→</span></button>
           </form>
-          <div class="examples"><span data-i18n="tryExample">أمثلة للتجربة:</span><button type="button" class="example" data-url="https://docs.python.org/3/">docs.python.org</button><button type="button" class="example" data-url="http://paypa1.com/verify/password">paypa1.com</button></div>
-          <div class="separator"></div>
-          <div class="help-card"><span aria-hidden="true">ⓘ</span><p data-i18n="caution">هذه أداة تعليمية لتحليل المؤشرات، وليست حكمًا نهائيًا على سلامة الرابط أو نموذجًا مُدرَّبًا بدقة مثبتة.</p></div>
+          <p id="errorBanner" class="error" role="alert" hidden></p>
+          <div class="privacy-note"><span aria-hidden="true">ⓘ</span><span>Offline structural analysis. A low score does not prove a URL is safe.</span></div>
         </section>
 
-        <section class="panel result-panel" id="results" aria-labelledby="resultsHeading">
-          <div class="panel-heading"><div><span class="eyebrow">02 / RISK ANALYSIS</span><h2 id="resultsHeading" data-i18n="resultsHeading">نتيجة التحليل</h2></div><span id="resultState" class="outline-chip" data-i18n="awaiting">بانتظار الإدخال</span></div>
-          <div id="emptyResult" class="empty-result"><div class="empty-icon" aria-hidden="true"><svg viewBox="0 0 160 160" fill="none"><circle cx="80" cy="80" r="74" stroke="currentColor" stroke-opacity=".28" stroke-dasharray="5 7"/><circle cx="80" cy="80" r="52" stroke="currentColor" stroke-opacity=".5"/><circle cx="80" cy="80" r="28" stroke="currentColor" stroke-width="2"/><path d="M80 45v20m0 30v20M45 80h20m30 0h20" stroke="currentColor" stroke-width="2" stroke-linecap="round"/><circle cx="80" cy="80" r="7" fill="currentColor"/></svg></div><h3 data-i18n="emptyTitle">جاهز لاكتشاف مؤشرات الخطورة</h3><p data-i18n="emptyBody">أدخلي رابطًا أو ارفعي صورة QR لعرض درجة الخطورة والإشارات الأمنية وتوصيات التعامل.</p><div class="empty-badge" data-i18n="emptyBadge">جاهز لاستقبال أول فحص</div></div>
-          <div id="errorBanner" class="error-banner" role="alert" hidden></div>
-          <div id="analysisResult" hidden>
-            <div class="result-summary"><div class="score-ring" id="scoreRing" role="img" aria-label="Risk score"><div><strong id="riskScore">0</strong><small>/ 100</small></div></div>
-              <div class="result-copy"><span class="field-label" data-i18n="levelLabel">مستوى الخطورة</span><strong id="riskLevel" class="risk-level">—</strong><p id="resultSummary"></p></div></div>
-            <div class="result-meta"><div><small data-i18n="targetHost">النطاق المستهدف</small><code id="resultHost"></code></div><div><small data-i18n="indicatorsCount">المؤشرات المكتشفة</small><b id="detectedCount">0</b></div></div>
-            <div class="subsection-heading"><h3 data-i18n="detectedHeading">مؤشرات التحليل</h3><span>FEATURE BREAKDOWN</span></div>
-            <div id="indicators" class="indicator-list"></div>
-            <div class="result-verdict"><span class="status-dot"></span><span data-i18n="verdictDisclaimer">هذه نتيجة تحليل قواعد، وليست نسبة ثقة ذكاء اصطناعي.</span></div><div class="result-actions"><button id="copyReport" class="secondary-button" type="button" data-i18n="copy">نسخ JSON</button><button id="downloadReport" class="secondary-button" type="button" data-i18n="download">تصدير تقرير</button></div>
-          </div>
-        </section></div>
-
-        <section class="panel telemetry-panel" id="telemetry" aria-labelledby="telemetryHeading">
-          <div class="panel-heading"><div><span class="eyebrow">03 / LIVE SESSION TELEMETRY</span><h2 id="telemetryHeading" data-i18n="telemetryHeading">التحليلات المرئية</h2><p class="panel-lead" data-i18n="telemetryHelp">رسومات مباشرة من نتائج فحوصات هذه الجلسة فقط. لا توجد بيانات تجريبية مخفية.</p></div><span class="outline-chip" data-i18n="realData">بيانات الجلسة</span></div>
-          <div class="telemetry-grid">
-            <div class="telemetry-segment"><div class="telemetry-title"><span class="chart-icon" aria-hidden="true">◉</span><strong data-i18n="distribution">توزيع مستويات الخطورة</strong></div>
-              <div class="distribution-body"><div class="distribution-ring" id="distributionRing" role="img" aria-label="Session risk distribution"><div class="distribution-center"><strong id="chartTotal">0</strong><small data-i18n="chartScans">فحص</small></div></div>
-                <div class="legend"><div><span class="legend-dot low"></span><span data-i18n="legendLow">منخفض</span><b id="lowCount">0</b></div><div><span class="legend-dot elevated"></span><span data-i18n="legendElevated">متوسط</span><b id="elevatedCount">0</b></div><div><span class="legend-dot high"></span><span data-i18n="legendHigh">مرتفع</span><b id="legendHighCount">0</b></div></div>
-              </div></div>
-            <div class="telemetry-segment"><div class="telemetry-title"><span class="chart-icon" aria-hidden="true">⌁</span><strong data-i18n="trendTitle">اتجاه درجات الخطورة</strong></div>
-              <div class="trend-container"><svg id="trendChart" class="trend-chart" viewBox="0 0 480 180" role="img" aria-label="Risk score trend in this session" preserveAspectRatio="none"><g class="chart-grid-lines" stroke="currentColor" stroke-opacity=".13"><path d="M10 25H470M10 72H470M10 119H470M10 166H470"/></g><path id="trendArea" d="" fill="url(#trendFill)"/><path id="trendLine" d="" fill="none" stroke="#5CE7D5" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"/><g id="trendPoints"></g><defs><linearGradient id="trendFill" x1="0" x2="0" y1="0" y2="1"><stop stop-color="#47D9CC" stop-opacity=".3"/><stop offset="1" stop-color="#47D9CC" stop-opacity="0"/></linearGradient></defs></svg><div id="trendEmpty" class="trend-empty" data-i18n="trendEmpty">سيظهر الرسم بعد إجراء الفحص الأول</div></div>
-              <div class="trend-axis"><span data-i18n="trendRecent">الأحدث</span><span data-i18n="trendRange">آخر 12 فحصًا</span></div>
+        <section class="panel result" id="results" aria-labelledby="resultTitle">
+          <div class="section-head"><div><span class="kicker">02 / SCAN RESULTS</span><h2 id="resultTitle">Risk assessment</h2></div><span id="resultBadge" class="pill muted">Awaiting scan</span></div>
+          <div id="resultEmpty" class="result-empty"><div class="empty-graphic" aria-hidden="true"><svg viewBox="0 0 170 170" fill="none"><circle cx="85" cy="85" r="76" stroke="currentColor" stroke-dasharray="5 7" opacity=".35"/><circle cx="85" cy="85" r="53" stroke="currentColor" opacity=".25"/><circle cx="85" cy="85" r="22" stroke="currentColor" stroke-width="2"/><path d="M85 48v14m0 46v14M48 85h14m46 0h14" stroke="currentColor" stroke-width="2" stroke-linecap="round"/></svg></div><h3>Ready when you are</h3><p>Your risk score, findings and recommendations appear here after the first scan.</p></div>
+          <div id="resultContent" hidden>
+            <div class="score-block">
+              <div class="gauge" id="gauge" role="img" aria-label="Risk score out of one hundred"><div class="gauge-inside"><strong id="riskScore">0</strong><span>out of 100</span></div></div>
+              <div class="score-details"><span class="small-label">ASSESSMENT</span><h3 id="riskLevel">Low</h3><p id="riskSummary"></p><div class="host-line">Domain: <b id="riskHost"></b></div></div>
             </div>
-            <div class="telemetry-segment telemetry-summary"><div class="telemetry-title"><span class="chart-icon" aria-hidden="true">↗</span><strong data-i18n="riskSnapshot">نظرة سريعة</strong></div><div class="snapshot-value" id="averageScore">—</div><div class="snapshot-sub" data-i18n="averageLabel">متوسط درجة الخطورة / 100</div><div class="snapshot-rule"><span data-i18n="maxLabel">أعلى درجة مرصودة</span><strong id="maxScore">—</strong></div><div class="snapshot-rule"><span data-i18n="latestLabel">آخر فحص</span><strong id="latestScore">—</strong></div><div class="snapshot-note" data-i18n="snapshotNote">التقييم مؤشرات بنيوية لا احتمالات إحصائية.</div></div>
+            <div class="findings-head"><h3>Detected indicators</h3><span id="indicatorCount">0 signals</span></div>
+            <div class="indicators" id="indicators"></div>
+            <div class="result-footer"><button type="button" class="export-button" id="exportButton">↓ Download JSON report</button><p id="resultCaution">These points are not a calibrated probability.</p></div>
           </div>
         </section>
+      </div>
 
-        <div class="lower-grid"><section class="panel" id="explanation"><div class="panel-heading"><div><span class="eyebrow">04 / SECURITY GUIDANCE</span><h2 data-i18n="interpretation">كيفية قراءة النتيجة</h2></div></div>
-          <div class="guidance"><div class="guide"><span class="guide-icon low">✓</span><div><strong data-i18n="lowTitle">منخفضة (0–19)</strong><p data-i18n="lowText">لم تُكتشف مؤشرات كثيرة؛ هذا لا يضمن أن الرابط آمن.</p></div></div><div class="guide"><span class="guide-icon medium">!</span><div><strong data-i18n="mediumTitle">متوسطة (20–49)</strong><p data-i18n="mediumText">توجد إشارات تستدعي التحقق من الوجهة قبل التفاعل.</p></div></div><div class="guide"><span class="guide-icon high">×</span><div><strong data-i18n="highTitle">مرتفعة (50–100)</strong><p data-i18n="highText">مؤشرات متعددة؛ تجنّبي الرابط وتحققي عبر قناة مستقلة.</p></div></div></div>
-          <div class="recommendation"><span>✦</span><p data-i18n="recommendation">لا تكتبي كلمة مرور أو بيانات مصرفية بعد مسح رمز غير متوقع. افتحي الموقع الرسمي بنفسك للتحقق.</p></div>
-        </section><section class="panel" id="activity"><div class="panel-heading"><div><span class="eyebrow">05 / SESSION ACTIVITY</span><h2 data-i18n="activity">نشاط الجلسة</h2></div><span class="outline-chip" data-i18n="memoryOnly">في الذاكرة فقط</span></div>
-          <div id="activityList" class="activity-list"><p class="muted" data-i18n="noActivity">لم تُجرَ فحوصات بعد.</p></div><button id="clearActivity" type="button" class="text-button" data-i18n="clear">مسح سجل الجلسة</button>
-        </section></div>
-        <footer>© 2026 CYBERGUARD · <span data-i18n="footer">مؤشر خطورة توضيحي وليس احتمالًا إحصائيًا أو ضمانًا للسلامة.</span></footer>
-      </main>
-    </div>
+      <section class="lower-grid" aria-label="Risk analytics and recent scans">
+        <div class="panel analytics"><div class="section-head"><div><span class="kicker">03 / LIVE INSIGHTS</span><h2>Risk distribution</h2></div><span class="pill muted">Session only</span></div><p class="subtle">Real scans performed in this browser. Nothing is preloaded.</p>
+          <div class="distribution">
+            <div class="distribution-ring" id="distributionRing"><span><b id="ringTotal">0</b><small>scans</small></span></div>
+            <div class="distribution-legend">
+              <div><span><i class="legend-dot low"></i> Low <small>0–19</small></span><strong id="lowTotal">0</strong></div>
+              <div><span><i class="legend-dot elevated"></i> Elevated <small>20–49</small></span><strong id="elevatedTotal">0</strong></div>
+              <div><span><i class="legend-dot high"></i> High <small>50–100</small></span><strong id="highTotal">0</strong></div>
+            </div>
+          </div>
+        </div>
+        <div class="panel activity"><div class="section-head"><div><span class="kicker">04 / RECENT ACTIVITY</span><h2>Latest scans</h2></div><button type="button" id="clearButton" class="text-button">Clear</button></div>
+          <p class="subtle">Only domains and scores are kept in temporary page memory.</p>
+          <div id="activityList" class="activity-list"><p class="activity-empty">No scans yet. Your history will appear here.</p></div>
+        </div>
+      </section>
+
+      <section class="explanation" id="how-it-works"><div><span class="kicker">HOW IT WORKS</span><h2>Clear insights. No false promises.</h2></div><p>CyberGuard examines a URL's structure, including lookalike domains, shortened links, insecure HTTP, unusual ports and account-related words. Each signal contributes points to a transparent score. The engine does not open the link, check its reputation, or claim an AI-based certainty.</p></section>
+    </main>
+    <footer>CYBERGUARD · Security education project <span>Built for clarity, privacy and explainability.</span></footer>
   </div>
-  <div id="announcer" class="sr-only" role="status" aria-live="polite"></div>
+  <div id="announcer" class="visually-hidden" role="status" aria-live="polite"></div>
 </body>
 </html>
