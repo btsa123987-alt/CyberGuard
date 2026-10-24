@@ -34,13 +34,19 @@
 - **REST API** — error codes, health checks, optional redacted history, and request rate limiting.
 - **Testable deployment** — Flask app factory, offline engine, tests, GitHub Actions, Docker, Compose, security notes, and optional isolated XGBoost/SHAP research lab.
 
+## 🖥️ VS Code on Windows (one-key local launch)
+
+Open the repository in VS Code, install the recommended Python extension when prompted, select **CyberGuard: Run Flask (Windows)** in **Run and Debug**, then press **F5**. The first run prepares an isolated `.venv` and installs dependencies automatically. Open http://127.0.0.1:5000 after Flask starts.
+
+**[Step-by-step Arabic VS Code guide](docs/VS_CODE_AR.md)** · Requires Python 3.11+ and internet access for the first package installation.
+
 ## 🚀 Quick start
 
 **Python 3.11+** is recommended.
 
 ```bash
 # 1) Clone your new GitHub repository (or unzip the downloaded project)
-git clone https://github.com/YOUR_USERNAME/CyberGuard.git
+git clone https://github.com/oull1i/CyberGuard.git
 cd CyberGuard
 
 # 2) Create and activate a virtual environment

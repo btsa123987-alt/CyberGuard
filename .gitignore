@@ -14,7 +14,11 @@ dist/
 !.env.example
 .DS_Store
 .idea/
-.vscode/
+.vscode/*
+!.vscode/launch.json
+!.vscode/tasks.json
+!.vscode/settings.json
+!.vscode/extensions.json
 reports/
 *.log
 model*.pkl
