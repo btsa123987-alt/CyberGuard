@@ -1,0 +1,101 @@
+<!doctype html>
+<html lang="ar" dir="rtl">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="description" content="CyberGuard: explainable, offline security indicators for links and QR codes.">
+  <meta name="color-scheme" content="dark">
+  <title>CyberGuard | مركز تحليل الروابط و QR</title>
+  <link rel="icon" href="/static/favicon.svg" type="image/svg+xml">
+  <link rel="stylesheet" href="/static/styles.css">
+  <script defer src="/static/app.js"></script>
+</head>
+<body>
+  <div class="app-shell">
+    <aside class="sidebar" aria-label="القائمة الجانبية">
+      <a class="brand" href="/" aria-label="CyberGuard home">
+        <span class="brand-icon" aria-hidden="true">⬡</span>
+        <span><strong>Cyber<span>Guard</span></strong><small>THREAT INTELLIGENCE LAB</small></span>
+      </a>
+      <div class="sidebar-section"><span class="eyebrow">WORKSPACE / مساحة العمل</span>
+        <a class="nav-link active" href="#scanner"><span>◈</span> <span data-i18n="navScanner">مركز الفحص</span></a>
+        <a class="nav-link" href="#explanation"><span>◇</span> <span data-i18n="navInsights">تفسير النتائج</span></a>
+        <a class="nav-link" href="#activity"><span>▤</span> <span data-i18n="navActivity">سجل الجلسة</span></a>
+      </div>
+      <div class="side-panel">
+        <span class="status-dot"></span><strong data-i18n="offline">وضع التحليل المحلي</strong>
+        <p data-i18n="privacy">لا يفتح النظام الروابط التي تحللينها، ولا يرسلها لأي خدمة خارجية.</p>
+      </div>
+      <div class="side-footer"><div>CYBERGUARD / V2.0</div><div>Built for security learning</div></div>
+    </aside>
+
+    <div class="content">
+      <header class="topbar">
+        <div class="breadcrumbs">SECURITY OPERATIONS <span>/</span> <b data-i18n="breadcrumb">لوحة التحكم</b></div>
+        <div class="header-right"><span class="live-chip"><span class="status-dot"></span> <span data-i18n="engine">RULE ENGINE ACTIVE</span></span>
+          <button id="language" class="lang-button" type="button" aria-label="Switch language">EN</button>
+        </div>
+      </header>
+
+      <main id="scanner" class="dashboard">
+        <div class="hero"><div><div class="kicker"><span class="pulse-dot"></span> CYBER THREAT ANALYSIS PLATFORM</div>
+          <h1 data-i18n="heroTitle">حلّل الرابط قبل <em>الضغط عليه.</em></h1>
+          <p data-i18n="heroText">اكشفي مؤشرات التصيّد في روابط الويب ورموز QR خلال ثوانٍ، مع شرح شفاف لكل إشارة خطورة.</p>
+        </div><div class="hero-decoration" aria-hidden="true"><div class="shield-ring"><span>⛨</span></div></div></div>
+
+        <section class="stat-row" aria-label="Platform summary">
+          <div class="stat"><div class="stat-top"><span data-i18n="scans">فحوصات الجلسة</span><i>◈</i></div><strong id="totalScans">00</strong><small data-i18n="sessionOnly">في هذه الصفحة فقط</small></div>
+          <div class="stat"><div class="stat-top"><span data-i18n="high">مخاطر مرتفعة</span><i class="danger">⚑</i></div><strong id="highCount">00</strong><small data-i18n="flagged">من نتائج الجلسة</small></div>
+          <div class="stat"><div class="stat-top"><span data-i18n="engineType">محرك التحليل</span><i class="cyan">⌘</i></div><strong class="stat-word">9 <span data-i18n="signals">مؤشرات</span></strong><small data-i18n="rules">قواعد واضحة وقابلة للتفسير</small></div>
+          <div class="stat"><div class="stat-top"><span data-i18n="external">طلبات خارجية</span><i class="green">◎</i></div><strong>0</strong><small data-i18n="noVisits">دون زيارة الروابط المرسلة</small></div>
+        </section>
+
+        <div class="main-grid"><section class="panel scan-panel" aria-labelledby="scanHeading">
+          <div class="panel-heading"><div><span class="eyebrow">01 / SCANNER</span><h2 id="scanHeading" data-i18n="scanHeading">فحص جديد</h2></div><span class="outline-chip" data-i18n="staticAnalysis">STATIC ANALYSIS</span></div>
+          <div class="tabs" role="tablist" aria-label="Scan type">
+            <button class="tab selected" id="urlTab" type="button" role="tab" aria-selected="true" aria-controls="urlPane">⌁ <span data-i18n="urlTab">رابط URL</span></button>
+            <button class="tab" id="qrTab" type="button" role="tab" aria-selected="false" aria-controls="qrPane">▦ <span data-i18n="qrTab">صورة QR</span></button>
+          </div>
+          <form id="scanForm">
+            <div id="urlPane" role="tabpanel" aria-labelledby="urlTab"><label for="urlInput" class="field-label" data-i18n="urlLabel">الرابط المراد تحليله</label>
+              <div class="input-wrap"><span aria-hidden="true">⌁</span><input id="urlInput" name="url" type="url" inputmode="url" maxlength="2048" autocomplete="off" spellcheck="false" placeholder="https://example.com/verify" aria-describedby="urlHelp" required></div>
+              <p id="urlHelp" class="helper" data-i18n="urlHelp">أدخلي عنوانًا يبدأ بـ https:// أو http://. لا يتم فتح الرابط.</p>
+            </div>
+            <div id="qrPane" role="tabpanel" aria-labelledby="qrTab" hidden><label class="field-label" for="fileInput" data-i18n="uploadLabel">ارفعي صورة رمز QR</label>
+              <label id="dropZone" class="dropzone" for="fileInput"><span class="upload-icon" aria-hidden="true">▦</span><strong data-i18n="dropTitle">اختاري صورة أو اسحبيها هنا</strong><small data-i18n="dropHelp">PNG، JPG، WebP — حتى 5 MB</small><span id="fileName" class="filename"></span></label>
+              <input class="sr-only" id="fileInput" type="file" name="image" accept="image/png,image/jpeg,image/webp" aria-describedby="fileHelp"><p id="fileHelp" class="helper" data-i18n="qrHelp">يجب أن تحتوي الصورة على رمز QR واحد قابل للقراءة.</p>
+            </div>
+            <button id="scanButton" class="primary-button" type="submit"><span aria-hidden="true">✧</span> <span data-i18n="scanButton">ابدأ التحليل الأمني</span> <span aria-hidden="true">←</span></button>
+          </form>
+          <div class="examples"><span data-i18n="tryExample">أمثلة للتجربة:</span><button type="button" class="example" data-url="https://docs.python.org/3/">docs.python.org</button><button type="button" class="example" data-url="http://paypa1.com/verify/password">paypa1.com</button></div>
+          <div class="separator"></div>
+          <div class="help-card"><span aria-hidden="true">ⓘ</span><p data-i18n="caution">هذه أداة تعليمية لتحليل المؤشرات، وليست حكمًا نهائيًا على سلامة الرابط أو نموذجًا مُدرَّبًا بدقة مثبتة.</p></div>
+        </section>
+
+        <section class="panel result-panel" id="results" aria-labelledby="resultsHeading">
+          <div class="panel-heading"><div><span class="eyebrow">02 / DETECTION RESULT</span><h2 id="resultsHeading" data-i18n="resultsHeading">نتيجة التحليل</h2></div><span id="resultState" class="outline-chip" data-i18n="awaiting">بانتظار الإدخال</span></div>
+          <div id="emptyResult" class="empty-result"><div class="empty-icon" aria-hidden="true">◎<div class="orbit-dot"></div></div><h3 data-i18n="emptyTitle">جاهز لاكتشاف مؤشرات الخطورة</h3><p data-i18n="emptyBody">أدخلي رابطًا أو ارفعي صورة QR لعرض درجة الخطورة والإشارات الأمنية وتوصيات التعامل.</p><div class="empty-badge">NO SCAN IN PROGRESS</div></div>
+          <div id="errorBanner" class="error-banner" role="alert" hidden></div>
+          <div id="analysisResult" hidden>
+            <div class="result-summary"><div class="score-ring" id="scoreRing" role="img" aria-label="Risk score"><div><strong id="riskScore">0</strong><small>/ 100</small></div></div>
+              <div class="result-copy"><span class="field-label" data-i18n="levelLabel">مستوى الخطورة</span><strong id="riskLevel" class="risk-level">—</strong><p id="resultSummary"></p></div></div>
+            <div class="result-meta"><div><small data-i18n="targetHost">النطاق المستهدف</small><code id="resultHost"></code></div><div><small data-i18n="indicatorsCount">المؤشرات المكتشفة</small><b id="detectedCount">0</b></div></div>
+            <div class="subsection-heading"><h3 data-i18n="detectedHeading">مؤشرات التحليل</h3><span>FEATURE BREAKDOWN</span></div>
+            <div id="indicators" class="indicator-list"></div>
+            <div class="result-actions"><button id="copyReport" class="secondary-button" type="button" data-i18n="copy">نسخ JSON</button><button id="downloadReport" class="secondary-button" type="button" data-i18n="download">تصدير تقرير</button></div>
+          </div>
+        </section></div>
+
+        <div class="lower-grid"><section class="panel" id="explanation"><div class="panel-heading"><div><span class="eyebrow">03 / SECURITY GUIDANCE</span><h2 data-i18n="interpretation">كيفية قراءة النتيجة</h2></div></div>
+          <div class="guidance"><div class="guide"><span class="guide-icon low">✓</span><div><strong data-i18n="lowTitle">منخفضة (0–19)</strong><p data-i18n="lowText">لم تُكتشف مؤشرات كثيرة؛ هذا لا يضمن أن الرابط آمن.</p></div></div><div class="guide"><span class="guide-icon medium">!</span><div><strong data-i18n="mediumTitle">متوسطة (20–49)</strong><p data-i18n="mediumText">توجد إشارات تستدعي التحقق من الوجهة قبل التفاعل.</p></div></div><div class="guide"><span class="guide-icon high">×</span><div><strong data-i18n="highTitle">مرتفعة (50–100)</strong><p data-i18n="highText">مؤشرات متعددة؛ تجنّبي الرابط وتحققي عبر قناة مستقلة.</p></div></div></div>
+          <div class="recommendation"><span>✦</span><p data-i18n="recommendation">لا تكتبي كلمة مرور أو بيانات مصرفية بعد مسح رمز غير متوقع. افتحي الموقع الرسمي بنفسك للتحقق.</p></div>
+        </section><section class="panel" id="activity"><div class="panel-heading"><div><span class="eyebrow">04 / SESSION ACTIVITY</span><h2 data-i18n="activity">نشاط الجلسة</h2></div><span class="outline-chip" data-i18n="memoryOnly">في الذاكرة فقط</span></div>
+          <div id="activityList" class="activity-list"><p class="muted" data-i18n="noActivity">لم تُجرَ فحوصات بعد.</p></div><button id="clearActivity" type="button" class="text-button" data-i18n="clear">مسح سجل الجلسة</button>
+        </section></div>
+        <footer>© 2026 CYBERGUARD · <span data-i18n="footer">مؤشر خطورة توضيحي وليس احتمالًا إحصائيًا أو ضمانًا للسلامة.</span></footer>
+      </main>
+    </div>
+  </div>
+  <div id="announcer" class="sr-only" role="status" aria-live="polite"></div>
+</body>
+</html>

@@ -1,0 +1,4 @@
+-r requirements.txt
+pytest>=8,<10
+qrcode[pil]>=8,<9
+ruff>=0.9,<1
