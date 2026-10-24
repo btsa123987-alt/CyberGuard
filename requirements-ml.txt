@@ -1,4 +1,4 @@
 -r requirements.txt
 scikit-learn>=1.5,<2
-xgboost>=2.1,<4
+xgboost>=3.4.1,<4
 shap>=0.46,<1
