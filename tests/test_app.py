@@ -21,8 +21,21 @@ def test_home_and_english(client):
     assert response.status_code == 200
     text = response.get_data(as_text=True)
     assert '<html lang="en" dir="ltr">' in text
-    assert "Know the risk." in text
-    assert "Scan QR code" in text
+    assert "Security starts" in text
+    assert "Scan a QR code" in text
+
+
+def test_dashboard_is_separate_page(client):
+    scanner = client.get("/").get_data(as_text=True)
+    dashboard = client.get("/dashboard")
+    assert dashboard.status_code == 200
+    body = dashboard.get_data(as_text=True)
+    assert '<body data-page="scanner">' in scanner
+    assert '<body data-page="dashboard">' in body
+    assert "Risk score timeline" in body
+    assert "Recent activity" in body
+    assert "Scan a URL" in scanner
+    assert "Risk score timeline" not in scanner
 
 
 def test_security_headers(client):
@@ -94,4 +107,8 @@ def test_english_ui_only():
     html = (root / "templates/index.html").read_text(encoding="utf-8")
     js = (root / "static/app.js").read_text(encoding="utf-8")
     assert not any("\u0600" <= ch <= "\u06ff" for ch in html + js)
+    dashboard = (root / "templates/dashboard.html").read_text(encoding="utf-8")
+    assert not any("\u0600" <= ch <= "\u06ff" for ch in dashboard)
+    assert "sessionStorage" in js
+    assert "window.location.assign('/dashboard')" in js
     assert "fetch(endpoint, opts)" in js

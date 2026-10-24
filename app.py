@@ -66,6 +66,10 @@ def create_app(config: dict | None = None) -> Flask:
     def home():
         return render_template("index.html")
 
+    @app.get("/dashboard")
+    def dashboard():
+        return render_template("dashboard.html")
+
     @app.get("/api/health")
     def health():
         return jsonify(status="ok", service="CyberGuard", mode="offline-heuristics")
