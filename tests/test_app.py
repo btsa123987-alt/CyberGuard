@@ -112,3 +112,21 @@ def test_english_ui_only():
     assert "sessionStorage" in js
     assert "window.location.assign('/dashboard')" in js
     assert "fetch(endpoint, opts)" in js
+
+
+def test_pro_max_dashboard_contract():
+    """Post-scan dashboard stays separate and renders from actual session scans."""
+    root = Path(__file__).parents[1]
+    html = (root / "templates/dashboard.html").read_text(encoding="utf-8")
+    js = (root / "static/app.js").read_text(encoding="utf-8")
+    css = (root / "static/styles.css").read_text(encoding="utf-8")
+    assert 'id="severityChart"' in html
+    assert 'id="incidentList"' in html
+    assert 'id="trendChart"' in html
+    assert 'id="riskDonut"' in html
+    assert "renderSeverityBars(history)" in js
+    assert "renderIncidentFeed(history)" in js
+    assert "sessionStorage" in js
+    assert "@media(max-width:580px)" in css
+    assert "prefers-reduced-motion" in css
+    assert (root / "STYLE_GUIDE.md").is_file()

@@ -5,7 +5,7 @@ A clean, English-language cybersecurity project with **two separate screens**:
 1. **Scanner** (`/`) — analyze a URL or QR image.
 2. **Security dashboard** (`/dashboard`) — see the score, indicators, charts, and your recent scans after analysis.
 
-The dashboard is styled as a dark security-operations console with violet highlights. **Charts use only real scans performed in your browser tab; there are no fake live feeds or fabricated detection-confidence metrics.**
+The dashboard uses a compact three-column, dark-violet operations-console design based on the [UI/UX Pro Max](https://github.com/nextlevelbuilder/ui-ux-pro-max-skill) principles (see [STYLE_GUIDE.md](STYLE_GUIDE.md)). **Charts use only real scans performed in your browser tab; there are no fake live feeds or fabricated detection-confidence metrics.**
 
 > CyberGuard is an educational, deterministic URL-risk analyzer, **not** a trained AI phishing detector or proof that a website is safe. It does not visit scanned URLs.
 

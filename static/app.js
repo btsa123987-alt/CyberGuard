@@ -192,6 +192,54 @@ function renderTimeline(history) {
     svg.append(svgEl('text', {x: point.x, y: h - 9, 'text-anchor': 'middle', fill: '#8e859e', 'font-size': 11}, `#${history.length - entries.length + index + 1}`));
   });
 }
+function renderSeverityBars(history) {
+  const chart = $('severityChart');
+  if (!chart) return;
+  chart.replaceChildren();
+  const entries = history.slice(-8);
+  const empty = $('severityEmpty');
+  if (empty) empty.hidden = entries.length > 0;
+  const width = 460, height = 270, left = 38, right = 12, top = 20, bottom = 33;
+  const chartWidth = width - left - right, chartHeight = height - top - bottom;
+  [0,25,50,75,100].forEach(value => {
+    const y = top + (100 - value) / 100 * chartHeight;
+    chart.append(svgEl('line',{x1:left,y1:y,x2:width-right,y2:y,stroke:'#3a3442','stroke-width':'1','stroke-dasharray':value===0?'0':'4 6'}));
+    chart.append(svgEl('text',{x:left-9,y:y+4,'text-anchor':'end',fill:'#c2b1d0','font-size':'12'},value));
+  });
+  if (!entries.length) return;
+  const slot = chartWidth / entries.length;
+  const barWidth = Math.min(29, slot * .55);
+  entries.forEach((item,index) => {
+    const score = safeScore(item.score);
+    const barHeight = Math.max(2,score / 100 * chartHeight);
+    const x = left + (index + .5) * slot - barWidth / 2;
+    const bar = svgEl('rect', {x, y: top + chartHeight - barHeight, width:barWidth,height:barHeight,rx:3,fill:COLORS[item.level]});
+    bar.append(svgEl('title',{},`Scan ${history.length - entries.length + index + 1} (${riskName(item.level)}): ${score}/100`));
+    chart.append(bar);
+    chart.append(svgEl('text',{x:x+barWidth/2,y:height-8,'text-anchor':'middle',fill:'#c7b8d4','font-size':'12'},`#${history.length - entries.length + index + 1}`));
+  });
+}
+function renderIncidentFeed(history) {
+  const container = $('incidentList');
+  if (!container) return;
+  container.replaceChildren();
+  if (!history.length) {
+    const empty = document.createElement('p'); empty.className = 'incidents-empty';
+    empty.textContent = 'Run your first scan to see activity here.';
+    container.append(empty); return;
+  }
+  [...history].slice(-4).reverse().forEach(item => {
+    const row = document.createElement('div'); row.className = 'incident-item';
+    const marker = document.createElement('span'); marker.className = `incident-level ${item.level.toLowerCase()}`;
+    marker.setAttribute('aria-hidden','true');
+    const main = document.createElement('div'); main.className='incident-main';
+    const name = document.createElement('strong'); name.textContent = safeText(item.hostname,253);
+    const subtitle = document.createElement('small'); subtitle.textContent = `${riskName(item.level)} · ${formatTime(item.at)}`;
+    main.append(name,subtitle);
+    const score = document.createElement('span');score.className='incident-score';score.textContent=`${safeScore(item.score)}/100`;
+    row.append(marker,main,score);container.append(row);
+  });
+}
 function renderDonut(counts) {
   const total = counts.HIGH + counts.ELEVATED + counts.LOW;
   $('donutTotal').textContent = String(total);
@@ -299,7 +347,7 @@ function initDashboard() {
     $('highScans').textContent = String(counts.HIGH);
     $('averageRisk').textContent = history.length ? String(Math.round(sum / history.length)) : '0';
     $('totalSignals').textContent = String(indicators);
-    renderTimeline(history); renderDonut(counts); renderSignals(history);
+    renderTimeline(history); renderSeverityBars(history); renderDonut(counts); renderSignals(history); renderIncidentFeed(history);
     if (selected >= history.length) selected = history.length - 1;
     renderAssessment(history[selected] || null);
     renderTable(history, index => {
