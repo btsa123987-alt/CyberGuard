@@ -5,10 +5,13 @@ const $ = (id) => document.getElementById(id);
 const translations = {
   ar: {
     navScanner:'مركز الفحص',navInsights:'تفسير النتائج',navActivity:'سجل الجلسة',offline:'وضع التحليل المحلي',
-    privacy:'لا يفتح النظام الروابط التي تحللينها، ولا يرسلها لأي خدمة خارجية.',breadcrumb:'لوحة التحكم',engine:'RULE ENGINE ACTIVE',
+    privacy:'لا يفتح النظام الروابط التي تحللينها، ولا يرسلها لأي خدمة خارجية.',breadcrumb:'لوحة التحكم',engine:'محرك القواعد نشط',
+    heroEyebrow:'مركز التحليل الأمني • CYBER SECURITY OPERATIONS',heroFeature1:'خصوصية افتراضية',heroFeature2:'تفسير كل مؤشر',heroAction:'ابدأ فحصًا جديدًا',radarLabel:'محرك التحليل جاهز',
+    telemetryHeading:'التحليلات المرئية',telemetryHelp:'رسومات مباشرة من نتائج فحوصات هذه الجلسة فقط. لا توجد بيانات تجريبية مخفية.',realData:'بيانات الجلسة',
+    distribution:'توزيع مستويات الخطورة',chartScans:'فحص',legendLow:'منخفض',legendElevated:'متوسط',legendHigh:'مرتفع',trendTitle:'اتجاه درجات الخطورة',trendEmpty:'سيظهر الرسم بعد إجراء الفحص الأول',trendRecent:'الأحدث',trendRange:'آخر 12 فحصًا',riskSnapshot:'نظرة سريعة',averageLabel:'متوسط درجة الخطورة / 100',maxLabel:'أعلى درجة مرصودة',latestLabel:'آخر فحص',snapshotNote:'التقييم مؤشرات بنيوية لا احتمالات إحصائية.',verdictDisclaimer:'هذه نتيجة تحليل قواعد، وليست نسبة ثقة ذكاء اصطناعي.',emptyBadge:'جاهز لاستقبال أول فحص',
     heroTitle:'حلّل الرابط قبل الضغط عليه.',heroText:'اكشفي مؤشرات التصيّد في روابط الويب ورموز QR خلال ثوانٍ، مع شرح شفاف لكل إشارة خطورة.',
     scans:'فحوصات الجلسة',sessionOnly:'في هذه الصفحة فقط',high:'مخاطر مرتفعة',flagged:'من نتائج الجلسة',engineType:'محرك التحليل',signals:'مؤشرات',rules:'قواعد واضحة وقابلة للتفسير',external:'طلبات خارجية',noVisits:'دون زيارة الروابط المرسلة',
-    scanHeading:'فحص جديد',staticAnalysis:'STATIC ANALYSIS',urlTab:'رابط URL',qrTab:'صورة QR',urlLabel:'الرابط المراد تحليله',urlHelp:'أدخلي عنوانًا يبدأ بـ https:// أو http://. لا يتم فتح الرابط.',uploadLabel:'ارفعي صورة رمز QR',dropTitle:'اختاري صورة أو اسحبيها هنا',dropHelp:'PNG، JPG، WebP — حتى 5 MB',qrHelp:'يجب أن تحتوي الصورة على رمز QR واحد قابل للقراءة.',scanButton:'ابدأ التحليل الأمني',tryExample:'أمثلة للتجربة:',caution:'هذه أداة تعليمية لتحليل المؤشرات، وليست حكمًا نهائيًا على سلامة الرابط أو نموذجًا مُدرَّبًا بدقة مثبتة.',
+    scanHeading:'فحص جديد',staticAnalysis:'تحليل محلي',urlTab:'فحص رابط',qrTab:'فحص QR',urlLabel:'الرابط المراد تحليله',urlHelp:'أدخلي عنوانًا يبدأ بـ https:// أو http://. لا يتم فتح الرابط.',uploadLabel:'ارفعي صورة رمز QR',dropTitle:'اختاري صورة أو اسحبيها هنا',dropHelp:'PNG، JPG، WebP — حتى 5 MB',qrHelp:'يجب أن تحتوي الصورة على رمز QR واحد قابل للقراءة.',scanButton:'ابدأ التحليل الأمني',tryExample:'أمثلة للتجربة:',caution:'هذه أداة تعليمية لتحليل المؤشرات، وليست حكمًا نهائيًا على سلامة الرابط أو نموذجًا مُدرَّبًا بدقة مثبتة.',
     resultsHeading:'نتيجة التحليل',awaiting:'بانتظار الإدخال',emptyTitle:'جاهز لاكتشاف مؤشرات الخطورة',emptyBody:'أدخلي رابطًا أو ارفعي صورة QR لعرض درجة الخطورة والإشارات الأمنية وتوصيات التعامل.',levelLabel:'مستوى الخطورة',targetHost:'النطاق المستهدف',indicatorsCount:'المؤشرات المكتشفة',detectedHeading:'مؤشرات التحليل',copy:'نسخ JSON',download:'تصدير تقرير',
     interpretation:'كيفية قراءة النتيجة',lowTitle:'منخفضة (0–19)',lowText:'لم تُكتشف مؤشرات كثيرة؛ هذا لا يضمن أن الرابط آمن.',mediumTitle:'متوسطة (20–49)',mediumText:'توجد إشارات تستدعي التحقق من الوجهة قبل التفاعل.',highTitle:'مرتفعة (50–100)',highText:'مؤشرات متعددة؛ تجنّبي الرابط وتحققي عبر قناة مستقلة.',recommendation:'لا تكتبي كلمة مرور أو بيانات مصرفية بعد مسح رمز غير متوقع. افتحي الموقع الرسمي بنفسك للتحقق.',activity:'نشاط الجلسة',memoryOnly:'في الذاكرة فقط',noActivity:'لم تُجرَ فحوصات بعد.',clear:'مسح سجل الجلسة',footer:'مؤشر خطورة توضيحي وليس احتمالًا إحصائيًا أو ضمانًا للسلامة.',
     HIGH:'مرتفع',ELEVATED:'متوسط',LOW:'منخفض',summary_HIGH:'توجد مؤشرات بنيوية متعددة. تجنّبي فتح الرابط قبل التحقق المستقل.',summary_ELEVATED:'بعض الإشارات تستدعي التحقق من الوجهة عبر قناة موثوقة.',summary_LOW:'لم تظهر مؤشرات كثيرة ضمن قواعد الأداة؛ هذا لا يثبت سلامة الرابط.',
@@ -17,9 +20,12 @@ const translations = {
   },
   en: {
     navScanner:'Scanner',navInsights:'How to interpret',navActivity:'Session activity',offline:'Local analysis mode',privacy:'CyberGuard does not visit submitted URLs or send them to external services.',breadcrumb:'Dashboard',engine:'RULE ENGINE ACTIVE',
+    heroEyebrow:'CYBER SECURITY OPERATIONS / ANALYSIS HUB',heroFeature1:'Private by default',heroFeature2:'Explainable indicators',heroAction:'Start a new scan',radarLabel:'Analysis engine ready',
+    telemetryHeading:'Visual analytics',telemetryHelp:'Charts use real scans from this session only. No preloaded example metrics.',realData:'Session data',
+    distribution:'Risk level distribution',chartScans:'scans',legendLow:'Low',legendElevated:'Elevated',legendHigh:'High',trendTitle:'Risk score timeline',trendEmpty:'Run a scan to populate this chart',trendRecent:'Recent',trendRange:'Last 12 scans',riskSnapshot:'Snapshot',averageLabel:'Mean risk score / 100',maxLabel:'Highest observed',latestLabel:'Latest scan',snapshotNote:'Heuristic indicators, not statistical probabilities.',verdictDisclaimer:'Rule-based risk score, not AI confidence.',emptyBadge:'READY FOR FIRST SCAN',
     heroTitle:'Analyze links before you click.',heroText:'Spot phishing indicators in web addresses and QR codes, with a transparent explanation of every signal.',
     scans:'Session scans',sessionOnly:'In this page only',high:'High-risk findings',flagged:'From this session',engineType:'Analysis engine',signals:'signals',rules:'Explainable rules',external:'Outbound requests',noVisits:'Never visits submitted URLs',
-    scanHeading:'New scan',staticAnalysis:'STATIC ANALYSIS',urlTab:'URL address',qrTab:'QR image',urlLabel:'URL to analyze',urlHelp:'Enter an http:// or https:// URL. The site will not be visited.',uploadLabel:'Upload QR image',dropTitle:'Select an image or drop it here',dropHelp:'PNG, JPG, WebP — up to 5 MB',qrHelp:'The image must contain one readable QR code.',scanButton:'Start security analysis',tryExample:'Try an example:',caution:'Educational indicator analysis only. This is not proof of safety or a model with validated accuracy.',
+    scanHeading:'New scan',staticAnalysis:'LOCAL ANALYSIS',urlTab:'URL address',qrTab:'QR image',urlLabel:'URL to analyze',urlHelp:'Enter an http:// or https:// URL. The site will not be visited.',uploadLabel:'Upload QR image',dropTitle:'Select an image or drop it here',dropHelp:'PNG, JPG, WebP — up to 5 MB',qrHelp:'The image must contain one readable QR code.',scanButton:'Start security analysis',tryExample:'Try an example:',caution:'Educational indicator analysis only. This is not proof of safety or a model with validated accuracy.',
     resultsHeading:'Analysis results',awaiting:'AWAITING INPUT',emptyTitle:'Ready to inspect a link',emptyBody:'Enter a URL or upload a QR image to see risk indicators, explanations, and practical advice.',levelLabel:'Risk level',targetHost:'Target hostname',indicatorsCount:'Active indicators',detectedHeading:'Risk factor breakdown',copy:'Copy JSON',download:'Export report',
     interpretation:'How to read the score',lowTitle:'Low (0–19)',lowText:'Few signals were found; the URL may still be malicious.',mediumTitle:'Elevated (20–49)',mediumText:'Check the destination independently before interacting.',highTitle:'High (50–100)',highText:'Multiple signals were found; avoid the URL until verified.',recommendation:'Never type passwords or banking details after scanning unexpected QR codes. Visit the official site independently.',activity:'Session activity',memoryOnly:'Memory only',noActivity:'No scans yet.',clear:'Clear session activity',footer:'Illustrative risk indicator, not a probability or safety guarantee.',
     HIGH:'High risk',ELEVATED:'Elevated risk',LOW:'Low indicators',summary_HIGH:'Several structural indicators were found. Avoid this link pending independent verification.',summary_ELEVATED:'Some structural signals warrant verifying the destination independently.',summary_LOW:'Few selected indicators were observed. This does not mean that the URL is safe.',
@@ -35,6 +41,7 @@ let lastResult = null;
 const activity = [];  // Ephemeral session state. Do not persist private URLs.
 let scanCount = 0;
 let highCount = 0;
+const scoreHistory = []; // Anonymized numeric session scores only, never persisted.
 
 const t = (key) => translations[language][key] || key;
 function speak(message) { $('announcer').textContent = message; }
@@ -53,6 +60,7 @@ function tr() {
   $('language').textContent = language === 'ar' ? 'EN' : 'عربي';
   if (lastResult) renderResult(lastResult);
   renderActivity();
+  updateCharts();
 }
 function setMode(next) {
   mode = next;
@@ -112,6 +120,59 @@ function renderResult(result) {
   $('indicators').replaceChildren(...result.indicators.map(indicatorElement));
   speak(t('done'));
 }
+function updateCharts() {
+  // Only counts and scores produced by the analyzer during this browser session.
+  const low = scoreHistory.filter(entry => entry.level === 'LOW').length;
+  const elevated = scoreHistory.filter(entry => entry.level === 'ELEVATED').length;
+  const high = scoreHistory.filter(entry => entry.level === 'HIGH').length;
+  const total = scoreHistory.length;
+  $('lowCount').textContent = String(low);
+  $('elevatedCount').textContent = String(elevated);
+  $('legendHighCount').textContent = String(high);
+  $('chartTotal').textContent = String(total);
+  const lowPct = total ? low / total * 100 : 0;
+  const elevPct = total ? (low + elevated) / total * 100 : 0;
+  $('distributionRing').style.background = total
+    ? `conic-gradient(#62e3ac 0 ${lowPct}%, #ffd17b ${lowPct}% ${elevPct}%, #ff859d ${elevPct}% 100%)`
+    : 'conic-gradient(#40566e 0 100%)';
+  const distributionLabel = language === 'ar'
+    ? `عدد الفحوصات ${total}: منخفض ${low}، متوسط ${elevated}، مرتفع ${high}`
+    : `${total} scans: ${low} low, ${elevated} elevated, ${high} high`;
+  $('distributionRing').setAttribute('aria-label', distributionLabel);
+  const scores = scoreHistory.map(item => item.score);
+  $('averageScore').textContent = total ? (scores.reduce((sum, n) => sum + n, 0) / total).toFixed(1) : '—';
+  $('maxScore').textContent = total ? String(Math.max(...scores)) : '—';
+  $('latestScore').textContent = total ? String(scores[scores.length - 1]) : '—';
+  const visible = scores.slice(-12);
+  $('trendEmpty').hidden = visible.length > 0;
+  $('trendChart').setAttribute('aria-label', language === 'ar'
+    ? `اتجاه درجات آخر ${visible.length} فحص: ${visible.join('، ')}`
+    : `Risk score trend across ${visible.length} scans: ${visible.join(', ')}`);
+  const line = $('trendLine');
+  const area = $('trendArea');
+  const pointsRoot = $('trendPoints');
+  pointsRoot.replaceChildren();
+  if (!visible.length) { line.setAttribute('d', ''); area.setAttribute('d', ''); return; }
+  const x = i => visible.length === 1 ? 240 : 16 + i * (448 / (visible.length - 1));
+  const y = n => 166 - Math.max(0, Math.min(100, n)) * 1.4;
+  const path = visible.map((value,i)=>`${i ? 'L' : 'M'} ${x(i).toFixed(1)} ${y(value).toFixed(1)}`).join(' ');
+  line.setAttribute('d', path);
+  area.setAttribute('d', `${path} L ${x(visible.length - 1).toFixed(1)} 166 L ${x(0).toFixed(1)} 166 Z`);
+  visible.forEach((value,i) => {
+    const dot = document.createElementNS('http://www.w3.org/2000/svg','circle');
+    dot.setAttribute('cx', String(x(i)));
+    dot.setAttribute('cy', String(y(value)));
+    dot.setAttribute('r', i === visible.length - 1 ? '5' : '3.5');
+    dot.setAttribute('fill', i === visible.length - 1 ? '#a6ffee' : '#59dfce');
+    dot.setAttribute('stroke', '#10273c');
+    dot.setAttribute('stroke-width', '2');
+    const title = document.createElementNS('http://www.w3.org/2000/svg','title');
+    title.textContent = `${value}/100`;
+    dot.append(title);
+    pointsRoot.append(dot);
+  });
+}
+
 function renderActivity() {
   const root = $('activityList'); root.replaceChildren();
   if (!activity.length) { const empty = document.createElement('p'); empty.className='muted'; empty.textContent=t('noActivity'); root.append(empty); return; }
@@ -144,11 +205,12 @@ async function analyze(event) {
     if (!response.ok || !data.success || !data.result) { showError(data.message || t('error')); return; }
     lastResult = data.result;
     scanCount += 1; if (lastResult.risk_level === 'HIGH') highCount += 1;
+    scoreHistory.push({score:Math.max(0, Math.min(100, Number(lastResult.risk_score) || 0)), level:lastResult.risk_level});
     $('totalScans').textContent=String(scanCount).padStart(2,'0');
     $('highCount').textContent=String(highCount).padStart(2,'0');
     activity.unshift({host:lastResult.hostname,score:lastResult.risk_score,level:lastResult.risk_level,time:new Date().toLocaleTimeString(language === 'ar' ? 'ar-SA' : 'en-GB',{hour:'2-digit',minute:'2-digit'})});
     if (activity.length > 12) activity.pop();
-    renderResult(lastResult); renderActivity();
+    renderResult(lastResult); renderActivity(); updateCharts();
   } catch (_) { showError(t('error')); }
   finally { setBusy(false); }
 }
@@ -166,7 +228,7 @@ $('dropZone').addEventListener('dragover',(e)=>{e.preventDefault();e.currentTarg
 $('dropZone').addEventListener('dragleave',(e)=>e.currentTarget.classList.remove('dragover'));
 $('dropZone').addEventListener('drop',(e)=>{e.preventDefault();e.currentTarget.classList.remove('dragover');fileSelected(e.dataTransfer.files[0]);});
 document.querySelectorAll('.example').forEach((b)=>b.addEventListener('click',()=>{setMode('url');$('urlInput').value=b.dataset.url;$('urlInput').focus();}));
-$('clearActivity').addEventListener('click',()=>{activity.length=0;renderActivity();});
+$('clearActivity').addEventListener('click',()=>{activity.length=0;scoreHistory.length=0;scanCount=0;highCount=0;$('totalScans').textContent='00';$('highCount').textContent='00';renderActivity();updateCharts();});
 $('copyReport').addEventListener('click',async()=>{if(!lastResult)return;try{await navigator.clipboard.writeText(JSON.stringify(lastResult,null,2));speak(t('copied'));}catch(_){speak(t('copyFailed'));}});
 $('downloadReport').addEventListener('click',()=>{
   if (!lastResult) return;
