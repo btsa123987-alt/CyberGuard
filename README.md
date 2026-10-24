@@ -49,6 +49,16 @@ Write-Host 'CyberGuard is starting. Open http://127.0.0.1:5000' -ForegroundColor
 
 **🔎 [شرح كامل بالصور والخطوات والحلول](docs/COPY_PASTE_RUN_AR.md)**
 
+## ✨ CyberGuard V3 · Arabic-first Cyber Neon UI
+
+The dashboard has been redesigned with a premium RTL-first **Cyber Neon** interface, a built-in SVG security radar, an explainable risk gauge, a live session risk-distribution donut, and an SVG score timeline. Charts start empty and update from **actual scan results** only; they do not simulate incidents, traffic, or AI confidence.
+
+- **[UI/UX Pro Max design integration guide (Arabic)](docs/UIUX_PRO_MAX_AR.md)** — how to optionally install the upstream design skill in a supported assistant such as GitHub Copilot or Codex.
+- **[CyberGuard design-system specification](design-system/cyberguard/MASTER.md)** — semantic colors, RTL/LTR rules, accessibility, chart semantics, privacy, and interaction patterns.
+- **[Upstream UI/UX Pro Max](https://github.com/nextlevelbuilder/ui-ux-pro-max-skill)** — MIT-licensed design intelligence reference (not bundled in this repository). Its CLI is **optional** and not needed to run Flask.
+
+**Windows / VS Code:** Get the latest main branch, run CyberGuard with the existing F5 setup or the [copy-and-paste guide](docs/COPY_PASTE_RUN_AR.md), then visit **http://127.0.0.1:5000**. Existing GitHub clones can use Git Pull to update. ZIP users need the new ZIP and should not overwrite unrelated project folders.
+
 ## 📘 Project at a glance
 
 | Question | Answer |
