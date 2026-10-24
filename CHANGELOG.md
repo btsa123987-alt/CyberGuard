@@ -1,5 +1,13 @@
 # Changelog
 
+## 3.0.0 — 2026-10-24
+
+- Redesigned Arabic-first dashboard as Cyber Neon enterprise UI, with an animated SVG security radar and responsive layout.
+- Added fully data-driven session risk distribution, score timeline and summary analytics; never includes fabricated metrics.
+- Preserved URL and QR analysis APIs, safe DOM rendering, bilingual UI and existing Flask engine.
+- Published project-specific UI design tokens and accessibility guidelines inspired by UI/UX Pro Max.
+- Added optional upstream installer instructions for VS Code/GitHub Copilot and browser-facing frontend contract tests.
+
 ## 2.0.1 — 2026-10-24
 
 - Expanded the English README with an at-a-glance architecture and publishing notes.
