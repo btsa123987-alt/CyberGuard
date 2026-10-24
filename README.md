@@ -16,6 +16,39 @@
 
 **العربية:** CyberGuard أداة تعليمية لتحليل مؤشرات الروابط ورموز QR دون فتح الوجهة أو إرسالها لخدمات خارجية. درجة الخطورة توضيحية وليست احتمالًا إحصائيًا أو ضمانًا لسلامة الرابط. **[شرح المشروع بالعربية](docs/PROJECT_EXPLANATION_AR.md)** · **[دليل التشغيل والنشر على GitHub](docs/GITHUB_AR.md)**.
 
+## ▶️ تشغيل CyberGuard بالنسخ واللصق — Windows (بدون Git)
+
+**أسرع طريقة على Windows:** افتحي **VS Code → Terminal → New Terminal**، وتأكدي أن الطرفية **PowerShell**. انسخي **مربع الكود كاملًا** والصقيه في الطرفية ثم اضغطي Enter. لا تلصقيه في صفحة GitHub نفسها.
+
+> المتطلبات: **Python 3.11 أو أحدث** مثبت، واتصال بالإنترنت في أول تشغيل. هذا الأمر ينزّل ملفات المشروع من مستودعك العام، ويضعها في **مجلد جديد** داخل حساب Windows (بدون تغيير ملفاتك القديمة)، وينشئ بيئة `.venv` ويثبت مكتبات `requirements.txt` ثم يبدأ Flask.
+
+```powershell
+$ErrorActionPreference = 'Stop'
+$folder = Join-Path $HOME ('CyberGuard-' + (Get-Date -Format 'yyyyMMdd-HHmmss-fff'))
+New-Item -ItemType Directory -Path $folder | Out-Null
+$zip = Join-Path $folder 'CyberGuard.zip'
+
+Invoke-WebRequest -Uri 'https://github.com/oull1i/CyberGuard/archive/refs/heads/main.zip' -OutFile $zip
+Expand-Archive -LiteralPath $zip -DestinationPath $folder
+Set-Location (Join-Path $folder 'CyberGuard-main')
+
+if (Get-Command py -ErrorAction SilentlyContinue) {
+    & py -3 scripts\vscode_setup.py
+} elseif (Get-Command python -ErrorAction SilentlyContinue) {
+    & python scripts\vscode_setup.py
+} else {
+    throw 'Install Python 3.11+ first, then restart VS Code.'
+}
+if ($LASTEXITCODE -ne 0) { throw 'Setup failed. See the message above.' }
+
+Write-Host 'CyberGuard is starting. Open http://127.0.0.1:5000' -ForegroundColor Green
+& .\.venv\Scripts\python.exe app.py
+```
+
+عندما تظهر عبارة `Running on http://127.0.0.1:5000` افتحي **http://127.0.0.1:5000** في المتصفح. لإيقاف الخادم اضغطي `Ctrl+C` في الطرفية. إذا ظهر خطأ، انسخي نص الخطأ وأرسليه هنا.
+
+**🔎 [شرح كامل بالصور والخطوات والحلول](docs/COPY_PASTE_RUN_AR.md)**
+
 ## 📘 Project at a glance
 
 | Question | Answer |
