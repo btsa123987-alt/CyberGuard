@@ -474,3 +474,21 @@ function initDashboard() {
 }
 if (document.body.dataset.page === 'scanner') initScanner();
 if (document.body.dataset.page === 'dashboard') initDashboard();
+
+// Cinematic micro-interaction: decorative hologram parallax; no scan data is sent.
+(function setupHologram() {
+  const stage = document.querySelector('.hologram-stage');
+  if (!stage || window.matchMedia('(prefers-reduced-motion: reduce)').matches) return;
+  stage.addEventListener('pointermove', event => {
+    if (event.pointerType === 'touch') return;
+    const bounds = stage.getBoundingClientRect();
+    const x = (event.clientX - bounds.left) / bounds.width - .5;
+    const y = (event.clientY - bounds.top) / bounds.height - .5;
+    stage.style.setProperty('--mx', `${(x * 13).toFixed(1)}deg`);
+    stage.style.setProperty('--my', `${(-y * 11).toFixed(1)}deg`);
+  }, {passive:true});
+  stage.addEventListener('pointerleave', () => {
+    stage.style.setProperty('--mx', '0deg');
+    stage.style.setProperty('--my', '0deg');
+  });
+})();
