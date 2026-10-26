@@ -31,7 +31,7 @@
       </header>
       <main class="command-main" id="main">
         <div class="command-intro">
-          <div><div class="scan-breadcrumb"><span class="purple-dot"></span> CYBERGUARD <span class="crumb-sep">/</span> ANALYSIS CENTER</div><h1>MAKE RISK <span>VISIBLE.</span></h1><p>A clearer view of your URL and QR scans. Every metric comes from this tab's analysis history.</p></div>
+          <div><div class="scan-breadcrumb"><span class="purple-dot"></span> CYBERGUARD <span class="crumb-sep">/</span> ANALYSIS CENTER</div><h1>Security <span>overview</span></h1><p>A clearer view of your URL and QR scans. Every metric comes from this tab's analysis history.</p></div>
           <a href="/" class="command-scan-cta"><svg viewBox="0 0 24 24" fill="none" aria-hidden="true"><path d="M12 4v16M4 12h16" stroke="currentColor" stroke-width="2" stroke-linecap="round"/></svg> New scan</a>
         </div>
         <div class="command-privacy"><span class="green-dot" aria-hidden="true"></span><strong>Private session</strong><span>Offline URL analysis · No background monitoring · No fabricated live data</span><span class="command-local-tag">RULE-BASED ENGINE</span></div>
@@ -66,9 +66,15 @@
               <div class="ops-panel-heading"><h2 id="assessmentHeading"><span class="heading-icon" aria-hidden="true">⌖</span> Risk assessment</h2><span class="panel-mini-label">SELECTED SCAN</span></div>
               <div id="assessmentEmpty" class="assess-empty">No results yet. <a href="/">Run a scan</a> to view the full assessment.</div>
               <div id="assessmentContent" hidden>
-                <div class="assessment-upper"><div class="mini-gauge" id="miniGauge"><div><strong id="assessmentScore">0</strong><small>POINTS / 100</small></div></div><div class="assessment-copy"><span class="severity-pill" id="assessmentLevel">Low</span><h3 id="assessmentHost">—</h3><p id="assessmentSummary"></p></div></div>
+                <div class="assessment-upper"><div class="mini-gauge" id="miniGauge"><div><strong id="assessmentScore">0</strong><small>POINTS / 100</small></div></div><div class="assessment-copy"><span class="severity-pill" id="assessmentLevel">Low</span><h3 id="assessmentHost">—</h3><p id="assessmentSummary"></p><p class="recommendation-copy" id="assessmentRecommendation"></p></div></div>
                 <div class="assessment-bottom"><span><strong id="assessmentSignals">0</strong> detected indicators</span><span id="assessmentTime">—</span></div><button class="outline-action" id="downloadReport" type="button">↓ Export JSON report</button>
               </div>
+            </section>
+            <section class="ops-panel findings-widget" aria-labelledby="findingsHeading">
+              <div class="ops-panel-heading"><h2 id="findingsHeading"><span class="heading-icon" aria-hidden="true">◇</span> Detected risk indicators</h2><span class="panel-mini-label">EXPLAINABLE</span></div>
+              <p class="ops-hint">Evidence returned by the local analyzer for the selected scan. Expand a finding to inspect its explanation.</p>
+              <div id="findingCards" class="finding-cards"><p class="findings-empty">Run a scan to view actual findings.</p></div>
+              <p class="findings-disclaimer">Scores are heuristic points, not a calibrated probability or a live threat verdict.</p>
             </section>
             <section class="ops-panel signals-widget" aria-labelledby="signalsHeading">
               <div class="ops-panel-heading"><h2 id="signalsHeading"><span class="heading-icon" aria-hidden="true">≋</span> Top detected signals</h2><span class="panel-mini-label">FREQUENCY</span></div><p class="ops-hint">Which structural indicators appeared most often?</p><div class="signal-bars" id="signalBars"></div>

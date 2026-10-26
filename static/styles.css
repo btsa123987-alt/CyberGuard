@@ -238,46 +238,51 @@ body.scanning-active {overflow:hidden;}
 @media(prefers-reduced-motion:reduce){.transition-progress span{animation:none;transform:none;width:100%;}.scan-transition *{animation:none!important;}}
 
 
-/* ============================================================================
-   CYBERGUARD / CINEMATIC EDITION
-   Original SVG/CSS holographic identity inspired by the supplied motion reference.
-   The visual is explicitly decorative (not a valid QR code).
-   Existing API, scan lifecycle, session-only data and CSP are unchanged.
-   ============================================================================ */
-:root{--bg:#060814;--surface:#0e1020;--surface2:#161528;--rail:#090b17;--stroke:#2a2744;--stroke-soft:#211e36;--text:#f7f7ff;--muted:#aaa6c2;--purple:#cf7bff;--purple-deep:#8544dc;--cyan:#55dbff;--green:#78e5c2}
-body{background:radial-gradient(ellipse 660px 560px at 80% 9%,rgba(95,39,172,.25),transparent 72%),radial-gradient(ellipse 720px 380px at 10% 52%,rgba(19,57,130,.16),transparent 79%),#060814;overflow-x:clip}
-body:before{content:"";position:fixed;inset:0;pointer-events:none;z-index:0;opacity:.19;background-image:linear-gradient(#8f8ad010 1px,transparent 1px),linear-gradient(90deg,#8f8ad010 1px,transparent 1px);background-size:66px 66px;mask-image:linear-gradient(to bottom,#000,transparent 80%)}
-.application{position:relative;z-index:1}.app-header{background:rgba(8,9,20,.75);backdrop-filter:blur(20px);position:sticky;top:0;z-index:8;height:80px}
-.identity strong{font-size:23px;letter-spacing:-1.25px;font-weight:850}.identity strong::after{content:"®";font-size:8px;position:relative;top:-13px;margin-left:3px;color:#a6a4bc}
-.identity-icon{background:radial-gradient(circle at 30% 20%,#6157b8,#19172e);border-color:#7668b2;box-shadow:0 0 20px #7950b544}
-.rail{background:rgba(5,7,17,.94)}.rail-logo{border-color:#7963bb;background:#17162b}.rail-link.active{background:#34244b;color:#e6c9ff}
-.scan-main{padding-top:36px}.scan-breadcrumb,.overline,.section-label{font-family:ui-monospace,Consolas,monospace;letter-spacing:2.2px}
-.scan-intro{grid-template-columns:minmax(0,1fr) minmax(350px,1fr);min-height:560px;margin-top:18px;gap:2vw}
-.scan-intro h1{font-size:clamp(60px,6.45vw,118px);line-height:.94;letter-spacing:-.073em;font-weight:900;margin:25px 0 29px;text-wrap:balance}
-.scan-intro h1 span{background:linear-gradient(95deg,#fa7ccf 1%,#bc77ff 48%,#59dbfc 97%);background-clip:text;-webkit-background-clip:text;color:transparent}
-.scan-intro p{font-size:clamp(15px,1.2vw,18px);line-height:1.85;max-width:570px;color:#c4bfdb}
-.overline{font-size:11px;color:#b79cfb}.intro-tags{border-top:1px solid #4e3e734d;padding-top:20px;gap:13px 24px;line-height:1.5}.intro-tags span{color:#a8a2c8}
-.scan-workspace{margin-top:38px;grid-template-columns:minmax(0,1.5fr) minmax(295px,.75fr)}.surface{background:linear-gradient(145deg,#141326ee,#0c1021f2);border-color:#34304b;box-shadow:0 30px 80px #00000036, inset 0 1px #ffffff08}
-.scan-card{position:relative;overflow:hidden}.scan-card:before{content:"";position:absolute;inset:0 0 auto;height:2px;background:linear-gradient(90deg,transparent,#ab63e9,#57deff,transparent);opacity:.6}
-.primary-action{background:linear-gradient(95deg,#b55dff,#41c9ff);border-color:#81c7fb;box-shadow:0 10px 38px #803bea3d;color:#080816}.primary-action:hover{box-shadow:0 12px 45px #7539d777,0 0 0 3px #864fff24}
-.scan-intro .security-art.hologram-stage{min-height:480px;isolation:isolate;overflow:visible;perspective:930px;--mx:0deg;--my:0deg}
-.holo-ambient{position:absolute;width:360px;height:360px;max-width:87%;max-height:87%;border-radius:50%;background:conic-gradient(from 30deg,#552ee388,#31cce566,#6625d7aa,#d4419e55,#552ee388);filter:blur(76px);opacity:.45;animation:holoBreathe 7s ease-in-out infinite}
-.holo-orbit{position:absolute;width:min(86%,450px);aspect-ratio:1;border:1px solid #8651c357;border-radius:50%;transform:rotateX(68deg) rotateZ(18deg);box-shadow:0 0 25px #6c43d22b,inset 0 0 25px #4931bf25;animation:orbitSpin 14s linear infinite}
-.holo-orbit-b{width:min(70%,360px);transform:rotateX(65deg) rotateY(40deg);border-style:dashed;border-color:#46d5f777;animation-duration:21s;animation-direction:reverse}
-.holo-tilt{position:relative;width:clamp(190px,24vw,315px);aspect-ratio:1;transform-style:preserve-3d;transform:rotateY(calc(-19deg + var(--mx))) rotateX(calc(13deg + var(--my))) rotateZ(-7deg);animation:holoFloat 6s ease-in-out infinite;filter:drop-shadow(0 36px 50px #0008);z-index:2}
-.holo-qr-edge{position:absolute;inset:-7px;border:3px solid #69d9ffb0;border-radius:14px;transform:translateZ(-21px) translate(13px,11px);box-shadow:0 0 20px #5cd4fc65,inset 0 0 25px #8d45ee55}
-.holo-qr-surface{position:absolute;inset:0;border:2px solid #a97cffe8;border-radius:12px;background:linear-gradient(130deg,#110d2e,#0a2340 65%,#1d0d3b);overflow:hidden;box-shadow:inset 0 0 35px #9845f344,0 0 24px #9657e57a,0 0 75px #5446c444;transform:translateZ(15px);padding:12%}
-.holo-code{display:block;width:100%;height:100%;color:#a8deff;filter:drop-shadow(0 0 3px #83dfff) drop-shadow(0 0 8px #b07ffb)}
-.holo-laser{position:absolute;left:0;right:0;top:18%;height:3px;background:#79ecff;box-shadow:0 0 16px 3px #42daff,0 0 45px 13px #467bff45;animation:laserSweep 3.5s ease-in-out infinite alternate}.holo-sheen{position:absolute;inset:0;pointer-events:none;background:linear-gradient(110deg,transparent 20%,#e2bdff17 48%,transparent 60%);animation:sheen 8s linear infinite}
-.holo-coordinate{position:absolute;color:#b5a1ce;font:10px/1.7 ui-monospace,monospace;letter-spacing:1px;text-shadow:0 0 17px #d176fe99}.holo-coordinate-left{left:2%;top:24%}.holo-coordinate-right{right:0;bottom:21%;text-align:right}.holo-particle{position:absolute;height:4px;width:4px;border-radius:50%;background:#a1eaff;box-shadow:0 0 14px 3px #8b76ff;animation:particleDrift 7s ease-in-out infinite}.p1{top:14%;left:17%}.p2{top:30%;right:8%;animation-delay:-2s}.p3{bottom:18%;left:19%;animation-delay:-4s}.p4{bottom:8%;right:22%;animation-delay:-1s}
-.hologram-stage .art-bottom{bottom:-7px;text-align:center;letter-spacing:.8px;font-size:9px;color:#a6a2bf}
-.story-chapter{display:grid;grid-template-columns:1.1fr .8fr;gap:7vw;padding:95px 15px 115px;align-items:end;border-bottom:1px solid #302445;position:relative}.story-chapter:before{content:"03 / TRUST INTELLIGENCE";position:absolute;top:41px;right:15px;color:#5a476e;font:10px ui-monospace,monospace;letter-spacing:3px}.story-chapter h2{font-size:clamp(36px,4.8vw,72px);line-height:1.05;letter-spacing:-.06em;margin:19px 0 0}.story-chapter h2 em{font-weight:500;color:#bc8bff}.story-chapter-copy{max-width:440px}.story-chapter-copy p{color:#bab3cb;font-size:15px;line-height:1.85}.story-link{display:inline-flex;gap:18px;align-items:center;color:#bfeaff;font-weight:750;margin-top:16px;border-bottom:1px solid #71c7ef;padding-bottom:10px}
-/* Cinematic dashboard, preserving data-driven SVG charts and readable layouts */
-.dashboard-main{padding-top:45px}.dashboard-intro h1{font-size:clamp(46px,5vw,82px);letter-spacing:-.069em;line-height:1.03}.dashboard-intro h1 span{background:linear-gradient(100deg,#f07bc9,#aa76fa,#60cbff);background-clip:text;color:transparent}.metric-widget,.widget{background:linear-gradient(150deg,#161429,#0d1122);border-color:#342d50}.metric-widget:hover,.widget:hover{border-color:#5f4d86;box-shadow:0 10px 40px #7c3add1c}.widget-heading h2{letter-spacing:-.6px}.dashboard-note{background:linear-gradient(90deg,#28174388,#121829)}
-/* Contextual focus cues and motion-safe controls */
-:where(a,button,input):focus-visible{outline:3px solid #63dfff;outline-offset:3px}.surface,.rail-link,.holo-tilt{will-change:auto}
-@keyframes holoBreathe{50%{opacity:.66;transform:scale(1.13)}}@keyframes holoFloat{0%,100%{translate:0 2px}50%{translate:0 -13px}}@keyframes orbitSpin{to{rotate:360deg}}@keyframes laserSweep{to{top:83%}}@keyframes sheen{to{translate:140%}}@keyframes particleDrift{50%{translate:18px -32px;opacity:.35}}
-@media(max-width:1100px){.scan-intro{grid-template-columns:minmax(0,1fr) minmax(250px,.8fr);min-height:410px}.scan-intro .security-art.hologram-stage{min-height:365px}.holo-coordinate{display:none}.holo-tilt{width:225px}}
-@media(max-width:780px){.scan-intro{grid-template-columns:1fr;gap:0}.scan-intro h1{font-size:clamp(50px,11vw,77px)}.scan-intro .security-art.hologram-stage{display:grid;min-height:340px}.holo-tilt{width:215px}.hologram-stage .art-bottom{bottom:6px}.story-chapter{grid-template-columns:1fr;gap:15px;padding:70px 0}.scan-workspace{grid-template-columns:1fr}.scan-main{padding-top:27px}}
-@media(max-width:480px){.scan-intro h1{font-size:clamp(45px,13vw,60px)}.scan-intro .security-art.hologram-stage{min-height:290px}.holo-tilt{width:180px}.holo-orbit{width:265px}.holo-orbit-b{width:215px}.hologram-stage .art-bottom{font-size:8px;letter-spacing:0;max-width:100%;line-height:1.5}.story-chapter h2{font-size:40px}.scan-intro p{font-size:14px}}
-@media(prefers-reduced-motion:reduce){.holo-ambient,.holo-orbit,.holo-tilt,.holo-laser,.holo-sheen,.holo-particle{animation:none!important;transition:none!important}.holo-tilt{transform:rotateY(-12deg) rotateX(9deg)}.story-chapter{scroll-behavior:auto}}
+/* Cinematic reference edition — custom CSS, no external shaders, tracking or CDNs */
+:root{--bg:#030713;--surface:#091323;--surface2:#0c1728;--rail:#060b16;--stroke:#20304c;--stroke-soft:#16243b;--purple:#aa6dff;--purple-deep:#6b42f4;--text:#f3f7ff;--muted:#9bacc6}
+body{background:radial-gradient(ellipse 780px 480px at 77% 5%,rgba(79,36,177,.22),transparent 75%),radial-gradient(ellipse 500px 500px at 7% 55%,rgba(0,161,224,.08),transparent 76%),#030713}
+.app-header{background:rgba(5,11,23,.88);backdrop-filter:blur(20px)}
+.surface,.ops-panel{background:linear-gradient(140deg,rgba(20,35,62,.9),rgba(7,14,29,.93));border-color:#213457;box-shadow:0 16px 52px #0007,inset 0 1px #ffffff0a}
+.surface:hover,.ops-panel:hover{border-color:#39507a}
+.scan-intro{min-height:445px}
+.scan-intro h1{font-size:clamp(52px,6.1vw,103px);line-height:.99;letter-spacing:-.065em;max-width:820px;text-shadow:0 4px 36px #7c5cff26}
+.scan-intro h1 span{background:linear-gradient(110deg,#a17bff,#d678ff 45%,#55d9ff);-webkit-background-clip:text;background-clip:text;color:transparent}
+.overline{color:#63cffa;letter-spacing:.24em}
+.primary-action{background:linear-gradient(105deg,#1bd8fa,#4681ff 52%,#9a57fa);color:#fff;border:1px solid #8fdfff;box-shadow:0 8px 35px #126eff44}
+.primary-action:hover{color:#fff;box-shadow:0 12px 45px #438cff77}
+.scan-card{backdrop-filter:blur(18px)}
+.qr-cinematic-stage{min-height:435px;perspective:850px;isolation:isolate;--mouse-x:0deg;--mouse-y:0deg}
+.qr-cinematic-stage .art-glow{width:370px;height:370px;background:radial-gradient(circle,#6a2aff 0%,#0062d8 43%,transparent 72%);filter:blur(54px);opacity:.47;animation:holo-pulse 5s ease-in-out infinite alternate}
+.holo-halo{position:absolute;width:330px;height:330px;border:1px solid #4599ff55;border-radius:50%;box-shadow:0 0 28px #594cff25,inset 0 0 28px #0aa9ff16;transform:rotateX(65deg) rotateZ(15deg);animation:halo-turn 19s linear infinite}
+.halo-two{width:400px;height:400px;border-color:#a15fff44;transform:rotateX(72deg) rotateZ(60deg);animation-duration:25s;animation-direction:reverse}
+.holo-qr{position:relative;width:min(59%,240px);aspect-ratio:1;transform-style:preserve-3d;transform:rotateX(calc(11deg + var(--mouse-y))) rotateY(calc(-20deg + var(--mouse-x)));animation:holo-float 6s ease-in-out infinite;filter:drop-shadow(0 20px 34px #2a57f388);z-index:2}
+.holo-qr:before{content:"";position:absolute;inset:-13px;border:2px solid #72dfff;border-radius:12px;box-shadow:0 0 22px #4bcaffbb,0 0 66px #884bff66,inset 0 0 18px #377dff77;transform:translateZ(-18px)}
+.holo-face{position:absolute;inset:0;padding:15px;background:linear-gradient(135deg,#12345e,#060c23 60%,#1c0c3d);border:1px solid #83eaff;border-radius:9px;box-shadow:inset 0 0 40px #197cff3b,0 0 30px #426cff55;overflow:hidden;transform:translateZ(16px)}
+.qr-cells{display:grid;grid-template-columns:repeat(25,1fr);grid-template-rows:repeat(25,1fr);width:100%;height:100%;gap:1px}
+.qr-cells i{display:block;min-width:0;min-height:0}
+.qr-cells .qr-lit{background:#7edbff;box-shadow:0 0 5px #55cfff;opacity:.92}
+.holo-beam{position:absolute;left:5%;right:5%;height:3px;top:0;background:#c4faff;box-shadow:0 0 12px 4px #32cfff,0 0 36px 9px #675eff;animation:beam-scan 3.8s ease-in-out infinite alternate}
+.holo-corner{position:absolute;width:25px;height:25px;border:3px solid #c8edff;filter:drop-shadow(0 0 7px #55caff)}
+.corner-a{left:4px;top:4px;border-right:0;border-bottom:0}.corner-b{right:4px;top:4px;border-left:0;border-bottom:0}.corner-c{left:4px;bottom:4px;border-right:0;border-top:0}.corner-d{right:4px;bottom:4px;border-left:0;border-top:0}
+.holo-orbit{position:absolute;inset:20px;border:1px dashed #846aff44;border-radius:50%;animation:halo-turn 40s linear infinite}.orbit-two{inset:65px;border-style:dotted;border-color:#28dfff55;animation-direction:reverse}
+.holo-tag{position:absolute;z-index:3;font:600 10px/1.3 Consolas,monospace;letter-spacing:.14em;color:#9dc9f5;background:#08162bc9;border:1px solid #2d4976;border-radius:7px;padding:10px 12px;box-shadow:0 8px 22px #0006}
+.holo-tag span{color:#6de9ff}.holo-tag-top{top:42px;left:2%}.holo-tag-bottom{bottom:53px;right:0}
+.qr-cinematic-stage .art-bottom{bottom:8px;white-space:nowrap}
+.finding-cards{display:grid;gap:9px}.finding-card{background:#0b172a;border:1px solid #253957;border-radius:11px;overflow:hidden;transition:border-color .2s,box-shadow .2s}
+.finding-card:hover,.finding-card[open]{border-color:#7757c8;box-shadow:0 0 20px #6c3ef41b}
+.finding-card summary{display:flex;align-items:center;justify-content:space-between;gap:14px;cursor:pointer;padding:14px 16px;font-size:12px;font-weight:700;list-style:none}
+.finding-card summary::-webkit-details-marker{display:none}
+.finding-card summary:before{content:"◇";color:#72d5ff;margin-right:4px}
+.finding-card summary span{flex:1;overflow-wrap:anywhere}
+.finding-card summary strong{white-space:nowrap;font:700 11px Consolas,monospace;color:#ffb9c3;background:#39212f;padding:6px 9px;border-radius:6px}
+.finding-card p{margin:0;padding:0 16px 15px 32px;color:#aab9d3;font-size:12px;line-height:1.75;overflow-wrap:anywhere}
+.findings-empty,.findings-disclaimer{color:#9aacc9;font-size:12px;line-height:1.6}.findings-disclaimer{margin-bottom:0}
+@keyframes holo-float{0%,100%{translate:0 -6px}50%{translate:0 13px}}
+@keyframes halo-turn{to{rotate:360deg}}
+@keyframes holo-pulse{to{opacity:.7;scale:1.12}}
+@keyframes beam-scan{to{top:100%}}
+@media(max-width:800px){.scan-intro{min-height:auto}.qr-cinematic-stage{min-height:350px}.holo-qr{width:205px}.holo-halo{width:280px;height:280px}.halo-two{width:325px;height:325px}.holo-tag{font-size:8px}.scan-intro h1{font-size:clamp(45px,10vw,72px)}}
+@media(max-width:420px){.qr-cinematic-stage{min-height:310px}.holo-qr{width:174px}.holo-halo{width:250px;height:250px}.halo-two{width:290px;height:290px}.holo-tag-top{top:18px}.holo-tag-bottom{bottom:37px}}
+@media(prefers-reduced-motion:reduce){.holo-qr,.holo-halo,.holo-orbit,.qr-cinematic-stage .art-glow,.holo-beam{animation:none!important;transition:none!important}}
+
+.recommendation-copy{margin-top:11px!important;padding:12px 14px;background:#09263a;border:1px solid #22627d;border-radius:9px;color:#bcecff!important;font-size:12px;line-height:1.65}

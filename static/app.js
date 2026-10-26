@@ -55,6 +55,7 @@ function addScan(result, inputType) {
     score: safeScore(result.risk_score),
     level: ['HIGH', 'ELEVATED', 'LOW'].includes(result.risk_level) ? result.risk_level : 'LOW',
     summary: safeText(result.summary, 500),
+    recommendation: safeText(result.recommendation, 500),
     type: inputType === 'QR' ? 'QR' : 'URL',
     indicators: sanitizedIndicators,
     at: new Date().toISOString(),
@@ -365,9 +366,66 @@ function renderDonut(counts) {
     target.append(circle); offset += length;
   }
 }
+/* Hologram is decorative: a deterministic non-scannable QR-like grid, never a QR
+   encoding of a destination. No external requests or third-party rendering code. */
+function initHologram() {
+  const grid = $('holoQrCells');
+  if (!grid) return;
+  const size = 25;
+  function finder(x, y, fx, fy) {
+    const dx=x-fx, dy=y-fy;
+    if (dx<0 || dy<0 || dx>6 || dy>6) return null;
+    return dx===0 || dy===0 || dx===6 || dy===6 || (dx>=2 && dx<=4 && dy>=2 && dy<=4);
+  }
+  const fragment=document.createDocumentFragment();
+  for (let y=0;y<size;y++) for(let x=0;x<size;x++){
+    const cell=document.createElement('i');
+    const corners=[[1,1],[17,1],[1,17]];
+    let pixel=null;
+    for (const [fx,fy] of corners) {
+      const hit=finder(x,y,fx,fy);
+      if(hit!==null){pixel=hit;break;}
+    }
+    if(pixel===null) pixel=((x*73+y*41+x*y*13)%17)<8;
+    if(pixel) cell.className='qr-lit';
+    fragment.appendChild(cell);
+  }
+  grid.appendChild(fragment);
+  const stage=document.querySelector('.qr-cinematic-stage');
+  if(stage && window.matchMedia('(pointer:fine) and (prefers-reduced-motion:no-preference)').matches){
+    stage.addEventListener('pointermove', event=>{
+      const rect=stage.getBoundingClientRect();
+      const dx=(event.clientX-rect.left)/rect.width-.5;
+      const dy=(event.clientY-rect.top)/rect.height-.5;
+      stage.style.setProperty('--mouse-x', `${(dx*10).toFixed(2)}deg`);
+      stage.style.setProperty('--mouse-y', `${(-dy*10).toFixed(2)}deg`);
+    });
+    stage.addEventListener('pointerleave', ()=>{
+      stage.style.setProperty('--mouse-x','0deg');
+      stage.style.setProperty('--mouse-y','0deg');
+    });
+  }
+}
+function renderFindings(item) {
+  const target=$('findingCards');
+  if(!target) return;
+  target.replaceChildren();
+  if(!item){const p=document.createElement('p');p.className='findings-empty';p.textContent='Run a scan to view actual findings.';target.append(p);return;}
+  if(!item.indicators.length){const p=document.createElement('p');p.className='findings-empty';p.textContent='No active structural risk indicators were detected by the current rules. This does not prove the destination is safe.';target.append(p);return;}
+  item.indicators.forEach((signal,index)=>{
+    const card=document.createElement('details');card.className='finding-card';if(index===0)card.open=true;
+    const title=document.createElement('summary');
+    const name=document.createElement('span');name.textContent=safeText(signal.title,110);
+    const points=document.createElement('strong');points.textContent=`+${safeScore(signal.points)} pts`;
+    title.append(name,points);
+    const description=document.createElement('p');description.textContent=safeText(signal.detail,250);
+    card.append(title,description);target.append(card);
+  });
+}
 function renderAssessment(item) {
   $('assessmentEmpty').hidden = !!item;
   $('assessmentContent').hidden = !item;
+  renderFindings(item);
   if (!item) return;
   const score = safeScore(item.score);
   const gauge = $('miniGauge');
@@ -376,6 +434,8 @@ function renderAssessment(item) {
   $('assessmentScore').textContent = String(score);
   $('assessmentHost').textContent = safeText(item.hostname, 253);
   $('assessmentSummary').textContent = safeText(item.summary, 500);
+  const recommendation=$('assessmentRecommendation');
+  if (recommendation) recommendation.textContent = safeText(item.recommendation, 500) || 'Verify the destination independently before entering sensitive information.';
   $('assessmentSignals').textContent = String(item.indicators.length);
   $('assessmentTime').textContent = formatTime(item.at);
   const pill = $('assessmentLevel');
@@ -384,7 +444,7 @@ function renderAssessment(item) {
   $('downloadReport').onclick = () => {
     // Do not export the full URL, query, or any secret-bearing URL path.
     const clean = {type: item.type, hostname: item.hostname, risk_score: score,
-      risk_level: item.level, indicators: item.indicators, analyzed_at: item.at,
+      risk_level: item.level, indicators: item.indicators, recommendation: item.recommendation, analyzed_at: item.at,
       score_note: 'Uncalibrated heuristic points; no proof of safety or maliciousness.'};
     const blob = new Blob([JSON.stringify(clean, null, 2)], {type: 'application/json'});
     const url = URL.createObjectURL(blob);
@@ -472,23 +532,5 @@ function initDashboard() {
   });
   render();
 }
-if (document.body.dataset.page === 'scanner') initScanner();
+if (document.body.dataset.page === 'scanner') { initHologram(); initScanner(); }
 if (document.body.dataset.page === 'dashboard') initDashboard();
-
-// Cinematic micro-interaction: decorative hologram parallax; no scan data is sent.
-(function setupHologram() {
-  const stage = document.querySelector('.hologram-stage');
-  if (!stage || window.matchMedia('(prefers-reduced-motion: reduce)').matches) return;
-  stage.addEventListener('pointermove', event => {
-    if (event.pointerType === 'touch') return;
-    const bounds = stage.getBoundingClientRect();
-    const x = (event.clientX - bounds.left) / bounds.width - .5;
-    const y = (event.clientY - bounds.top) / bounds.height - .5;
-    stage.style.setProperty('--mx', `${(x * 13).toFixed(1)}deg`);
-    stage.style.setProperty('--my', `${(-y * 11).toFixed(1)}deg`);
-  }, {passive:true});
-  stage.addEventListener('pointerleave', () => {
-    stage.style.setProperty('--mx', '0deg');
-    stage.style.setProperty('--my', '0deg');
-  });
-})();
