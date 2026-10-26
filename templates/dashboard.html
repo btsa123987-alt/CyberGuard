@@ -76,6 +76,31 @@
               <div id="findingCards" class="finding-cards"><p class="findings-empty">Run a scan to view actual findings.</p></div>
               <p class="findings-disclaimer">Scores are heuristic points, not a calibrated probability or a live threat verdict.</p>
             </section>
+            <section class="ops-panel ai-analysis-widget" id="aiInsights" aria-labelledby="aiHeading">
+              <div class="ops-panel-heading"><h2 id="aiHeading"><span class="heading-icon" aria-hidden="true">✧</span> CyberGuard AI Intelligence</h2><span class="ai-live-tag">HYBRID ANALYSIS</span></div>
+              <div class="ai-service-line"><span class="ai-orb" aria-hidden="true"></span><span id="aiServiceStatus" role="status">Checking Claude configuration…</span></div>
+              <p class="ops-hint">Local risk scoring stays unchanged. Retrieve published guidance offline or optionally ask Claude for a grounded explanation.</p>
+              <div class="ai-capability-grid">
+                <div><span class="ai-capability-label">RETRIEVAL</span><strong>RAG / Local references</strong><small>No external browsing</small></div>
+                <div><span class="ai-capability-label">AI CONFIDENCE</span><strong>Not calibrated</strong><small>No misleading probability</small></div>
+              </div>
+              <div class="ai-reference-head"><h3>Retrieved security guidance</h3><span id="ragCoverage">Run a scan first</span></div>
+              <div id="ragReferences" class="ai-references" aria-live="polite"><p class="ai-empty">Scan a URL or QR to see official guidance matched to its risk indicators.</p></div>
+              <div class="ai-consent-area">
+                <label class="ai-consent"><input id="aiConsent" type="checkbox"><span>I consent to send this scan's <strong>hostname, protocol, risk score and rule IDs</strong> to Anthropic. The full URL, query, path and QR image are not sent. This may incur API charges.</span></label>
+                <button type="button" id="aiExplainButton" class="ai-explain-button" disabled><span>✧</span> Ask Claude to explain this scan</button>
+                <p id="aiFeedback" class="ai-feedback" role="status">Claude is optional. Local scanning and RAG work without an API key.</p>
+              </div>
+              <div id="aiAnswer" class="ai-answer" hidden>
+                <span class="ai-answer-label">CLAUDE EXPLANATION · NOT A SAFETY VERDICT</span>
+                <p id="aiSummary"></p>
+                <h3>Recommended actions</h3>
+                <ul id="aiActions"></ul>
+                <p id="aiLimitations" class="ai-limits"></p>
+                <p class="ai-limits"><strong>Confidence:</strong> Not calibrated or independently validated. The original heuristic score remains the authoritative local output.</p>
+              </div>
+              <p class="ai-privacy-note">External reference links open only when you choose them. Scanned websites are never opened by CyberGuard.</p>
+            </section>
             <section class="ops-panel signals-widget" aria-labelledby="signalsHeading">
               <div class="ops-panel-heading"><h2 id="signalsHeading"><span class="heading-icon" aria-hidden="true">≋</span> Top detected signals</h2><span class="panel-mini-label">FREQUENCY</span></div><p class="ops-hint">Which structural indicators appeared most often?</p><div class="signal-bars" id="signalBars"></div>
             </section>
@@ -88,12 +113,12 @@
               <div class="severity-legend compact"><div><span><i class="legend-square red"></i> High</span><small>50–100</small></div><div><span><i class="legend-square yellow"></i> Elevated</span><small>20–49</small></div><div><span><i class="legend-square green"></i> Low</span><small>0–19</small></div></div>
             </section>
             <section class="ops-panel snapshot-panel" aria-labelledby="snapshotHeading"><div class="ops-panel-heading"><h2 id="snapshotHeading"><span class="heading-icon" aria-hidden="true">▧</span> Session snapshot</h2></div><div class="snapshot-items"><div><span>Total scans</span><strong id="totalScans">0</strong></div><div><span>High-risk scans</span><strong id="highScans">0</strong></div><div><span>Average score</span><strong><span id="averageRisk">0</span><small> /100</small></strong></div><div><span>Active indicators</span><strong id="totalSignals">0</strong></div></div></section>
-            <section class="ops-panel engine-panel"><div class="ops-panel-heading"><h2><span class="heading-icon" aria-hidden="true">◇</span> Analysis integrity</h2></div><p><span class="engine-dot"></span> 9 transparent risk rules</p><p><span class="engine-dot"></span> Destination links never visited</p><p><span class="engine-dot"></span> No AI confidence claims</p></section>
+            <section class="ops-panel engine-panel"><div class="ops-panel-heading"><h2><span class="heading-icon" aria-hidden="true">◇</span> Analysis integrity</h2></div><p><span class="engine-dot"></span> 9 transparent risk rules</p><p><span class="engine-dot"></span> Destination links never visited</p><p><span class="engine-dot"></span> AI opt-in · confidence not calibrated</p></section>
           </div>
         </div>
 
         <section class="ops-panel activity-widget" id="activity" aria-labelledby="activityHeading"><div class="ops-panel-heading"><h2 id="activityHeading"><span class="heading-icon" aria-hidden="true">▤</span> Recent activity</h2><div class="activity-actions"><span class="panel-mini-label">THIS TAB ONLY</span><button id="clearHistory" class="outline-action small" type="button">Clear session</button></div></div><div class="table-scroll"><table class="activity-table"><thead><tr><th scope="col">Domain</th><th scope="col">Input</th><th scope="col">Signals</th><th scope="col">Risk level</th><th scope="col">Score</th><th scope="col">Time</th><th scope="col">Details</th></tr></thead><tbody id="activityBody"><tr><td colspan="7" class="table-empty">No scans yet — start with the scanner.</td></tr></tbody></table></div></section>
-        <p class="footer-disclaimer">CyberGuard provides explainable, static URL heuristics. A low score is not proof of safety; no live threat feed, reputation service, or statistical model is used.</p>
+        <p class="footer-disclaimer">CyberGuard provides explainable, static URL heuristics. A low score is not proof of safety; no live reputation check or calibrated prediction model is used. Claude explanations, if enabled, are generative and opt-in.</p>
       </main>
     </div>
   </div>
