@@ -5,6 +5,10 @@ reputation lookups and must never be described as website-specific verification.
 """
 from __future__ import annotations
 
+from collections import Counter
+from math import log
+import re
+
 DOCUMENTS = (
     {
         "id": "ftc-qr",
@@ -62,26 +66,84 @@ VALID_KEYS = frozenset({
 })
 
 
+# Reproducible local hybrid retrieval. Each excerpt is a curated, human-reviewed
+# summary; this is NOT a live indexed web crawler or a vector/embedding database.
+_TOKEN_RE = re.compile(r"[a-z0-9]{2,}")
+RULE_TERMS = {
+    "ip_host": "ip address numeric hostname direct address",
+    "shortener": "shortened disguised redirect shortened links",
+    "brand_impersonation": "impersonation spoofed trusted brands",
+    "lookalike_domain": "lookalike domain changed letters impersonation phishing",
+    "punycode_hostname": "encoded unicode hostname visual deception",
+    "deep_subdomains": "subdomain misleading domain hostname",
+    "sensitive_terms": "login password verification account urgent credential",
+    "http_only": "insecure http encryption destination",
+    "nonstandard_port": "nonstandard network port destination",
+}
+
+
+def _terms(value: str) -> list[str]:
+    return _TOKEN_RE.findall(value.lower())
+
+
+_INDEX = tuple(Counter(_terms(doc["title"] + " " + doc["text"])) for doc in DOCUMENTS)
+_AVG_LENGTH = sum(sum(doc.values()) for doc in _INDEX) / len(_INDEX)
+_DF = Counter(token for doc in _INDEX for token in doc)
+
+
+def _bm25(query: list[str], index: Counter) -> float:
+    """BM25 lexical similarity against small curated local reference snippets."""
+    k1, b = 1.2, 0.75
+    length = sum(index.values())
+    result = 0.0
+    for term in set(query):
+        tf = index.get(term, 0)
+        if not tf:
+            continue
+        df = _DF[term]
+        idf = log(1 + (len(_INDEX) - df + 0.5) / (df + 0.5))
+        result += idf * tf * (k1 + 1) / (tf + k1 * (1 - b + b * length / _AVG_LENGTH))
+    return result
+
+
 def retrieve(indicator_keys: list[str], input_type: str = "URL", limit: int = 4) -> dict:
-    """Rank LOCAL documents against verified analyzer flags; no embeddings or I/O."""
+    """Run a local lexical BM25 + indicator-match retriever with cited sources.
+
+    All query terms are fixed trusted analyzer vocabulary, never a submitted URL.
+    The resulting match score ranks *guidance relevance*, not URL risk or confidence.
+    """
     keys = set(indicator_keys) & VALID_KEYS
     qr = input_type == "QR"
+    query = _terms(" ".join(RULE_TERMS[key] for key in sorted(keys)) + (" qr code image scam" if qr else " phishing url"))
     scored = []
-    for doc in DOCUMENTS:
-        tags = set(doc["tags"])
-        matches = keys & tags
-        rank = len(matches) * 5 + (3 if qr and "qr" in tags else 0)
-        if rank:
-            scored.append((rank, doc["id"], doc))
+    for doc, index in zip(DOCUMENTS, _INDEX):
+        matched = sorted(keys & set(doc["tags"]))
+        lexical = _bm25(query, index)
+        rank = lexical + len(matched) * 2.5 + (3 if qr and "qr" in doc["tags"] else 0)
+        if matched or (qr and "qr" in doc["tags"]):
+            scored.append((rank, doc["id"], doc, matched, lexical))
     if not scored:
-        scored = [(1, DOCUMENTS[2]["id"], DOCUMENTS[2]), (1, DOCUMENTS[5]["id"], DOCUMENTS[5])]
+        # Honest no-rule fallback: general safety advice with no matched indicators.
+        scored = [(_bm25(query, _INDEX[i]), DOCUMENTS[i]["id"], DOCUMENTS[i], [], _bm25(query, _INDEX[i])) for i in (2, 5)]
     scored.sort(key=lambda entry: (-entry[0], entry[1]))
-    selected = [entry[2] for entry in scored[:limit]]
-    covered = keys & set().union(*(set(doc["tags"]) for doc in selected)) if selected else set()
-    # Evidence coverage measures whether rule names have related guidance,
-    # not whether the URL is malicious or whether the model is accurate.
+    selected = scored[:max(1, min(8, limit))]
+    covered = keys & set().union(*(set(doc["tags"]) for _, _, doc, _, _ in selected)) if selected else set()
     return {
-        "documents": [{key: doc[key] for key in ("id", "title", "source", "url", "text")} for doc in selected],
-        "evidence_coverage": {"matched_flags": len(covered), "active_flags": len(keys), "meaning": "Relevant published guidance for active rule flags; not prediction accuracy."},
+        "documents": [
+            {
+                **{name: doc[name] for name in ("id", "title", "source", "url", "text")},
+                "matched_indicators": matched,
+                "ranking_score": round(rank, 3),
+                "lexical_bm25": round(lexical, 3),
+            }
+            for rank, _, doc, matched, lexical in selected
+        ],
+        "evidence_coverage": {
+            "matched_flags": len(covered),
+            "active_flags": len(keys),
+            "meaning": "Relevant published guidance for active rule flags; not prediction accuracy.",
+        },
         "retrieval_mode": "offline_rule_keyed_reference_retrieval",
+        "retrieval_algorithm": "hybrid_rule_match_plus_bm25",
+        "corpus_size": len(DOCUMENTS),
     }

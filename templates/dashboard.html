@@ -3,85 +3,104 @@
 <head>
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
-  <meta name="theme-color" content="#101015">
-  <meta name="description" content="CyberGuard security analytics dashboard: explainable URL and QR risk indicators.">
-  <title>Security Dashboard | CyberGuard</title>
+  <meta name="theme-color" content="#070a16">
+  <meta name="description" content="CyberGuard Intelligence Studio: real URL and QR risk scoring, exact Shapley attribution, grounded retrieval and opt-in Claude explanation.">
+  <title>Intelligence Studio | CyberGuard</title>
   <link rel="stylesheet" href="/static/styles.css">
   <script src="/static/app.js" defer></script>
 </head>
 <body data-page="dashboard">
-  <a href="#main" class="skip-link">Skip to dashboard content</a>
-  <div class="application">
+  <a class="skip-link" href="#main">Skip to content</a>
+  <div class="application studio-application">
     <aside class="rail" aria-label="Primary navigation">
-      <a class="rail-logo" href="/" aria-label="CyberGuard scanner">
-        <svg viewBox="0 0 32 32" fill="none" aria-hidden="true"><path d="m16 2 12 6v10c0 7-5 11-12 13C9 29 4 25 4 18V8L16 2Z" stroke="currentColor" stroke-width="2"/><path d="m10 17 4 4 8-9" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"/></svg>
-      </a>
+      <a class="rail-logo" href="/" aria-label="CyberGuard scanner"><svg viewBox="0 0 32 32" fill="none" aria-hidden="true"><path d="m16 2 12 6v10c0 7-5 11-12 13C9 29 4 25 4 18V8L16 2Z" stroke="currentColor" stroke-width="2"/><path d="m10 17 4 4 8-9" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"/></svg></a>
       <div class="rail-divider"></div>
       <nav class="rail-nav" aria-label="Pages">
         <a href="/" class="rail-link" aria-label="Scanner" title="Scanner"><svg viewBox="0 0 24 24" fill="none" aria-hidden="true"><path d="M4 8V5a1 1 0 0 1 1-1h3m8 0h3a1 1 0 0 1 1 1v3m0 8v3a1 1 0 0 1-1 1h-3m-8 0H5a1 1 0 0 1-1-1v-3M3 12h18" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/></svg></a>
-        <a href="/dashboard" class="rail-link active" aria-current="page" aria-label="Dashboard" title="Dashboard"><svg viewBox="0 0 24 24" fill="none" aria-hidden="true"><rect x="3" y="3" width="8" height="8" rx="1.5" stroke="currentColor" stroke-width="1.8"/><rect x="13" y="3" width="8" height="5" rx="1.5" stroke="currentColor" stroke-width="1.8"/><rect x="13" y="10" width="8" height="11" rx="1.5" stroke="currentColor" stroke-width="1.8"/><rect x="3" y="13" width="8" height="8" rx="1.5" stroke="currentColor" stroke-width="1.8"/></svg></a>
+        <a href="/dashboard" class="rail-link active" aria-current="page" aria-label="Intelligence Studio" title="Intelligence Studio"><svg viewBox="0 0 24 24" fill="none" aria-hidden="true"><rect x="3" y="3" width="8" height="8" rx="1.5" stroke="currentColor" stroke-width="1.8"/><rect x="13" y="3" width="8" height="5" rx="1.5" stroke="currentColor" stroke-width="1.8"/><rect x="13" y="10" width="8" height="11" rx="1.5" stroke="currentColor" stroke-width="1.8"/><rect x="3" y="13" width="8" height="8" rx="1.5" stroke="currentColor" stroke-width="1.8"/></svg></a>
       </nav>
-      <span class="rail-bottom"><span class="rail-online" title="Local engine ready"></span></span>
+      <span class="rail-bottom"><span class="rail-online" title="Offline scanner available"></span></span>
     </aside>
     <div class="app-content">
       <header class="app-header">
-        <div class="identity"><span class="identity-icon" aria-hidden="true">◆</span><span><strong>CyberGuard<span class="identity-suffix"> / Intelligence</span></strong><small>SECURITY ANALYTICS WORKSPACE</small></span></div>
-        <div class="header-tabs" aria-label="Primary pages"><a href="/" class="header-tab">Scanner</a><a href="/dashboard" class="header-tab selected" aria-current="page">Dashboard</a></div>
-        <div class="system-chip"><span class="green-dot"></span> Local engine <span class="chip-dim">/ Ready</span></div>
+        <div class="identity"><span class="identity-icon" aria-hidden="true">◆</span><span><strong>CyberGuard<span class="identity-suffix"> / Intelligence Studio</span></strong><small>EXPLAINABLE PHISHING INTELLIGENCE</small></span></div>
+        <div class="header-tabs" aria-label="Primary pages"><a href="/" class="header-tab">Scanner</a><a href="/dashboard" class="header-tab selected" aria-current="page">Intelligence</a></div>
+        <div class="system-chip"><span class="green-dot"></span> Local analysis <span class="chip-dim">/ Private</span></div>
       </header>
-      <main class="command-main focused-main" id="main">
-        <div class="command-intro focused-intro">
+      <main class="command-main studio-main" id="main">
+        <div class="command-intro studio-intro">
           <div>
-            <div class="scan-breadcrumb"><span class="purple-dot" aria-hidden="true"></span> CYBERGUARD <span class="crumb-sep">/</span> SCAN RESULTS</div>
-            <h1>Security <span>assessment.</span></h1>
-            <p>One clear result. The evidence behind it. What to do next.</p>
+            <div class="scan-breadcrumb"><span class="purple-dot" aria-hidden="true"></span> CYBERGUARD <span class="crumb-sep">/</span> EVIDENCE WORKSPACE <span class="studio-version">V3.1</span></div>
+            <h1>See beyond <span>the score.</span></h1>
+            <p>One genuine scan. Five ways to investigate it. No fabricated threat telemetry.</p>
           </div>
-          <a href="/" class="command-scan-cta"><svg viewBox="0 0 24 24" fill="none" aria-hidden="true"><path d="M12 4v16M4 12h16" stroke="currentColor" stroke-width="2" stroke-linecap="round"/></svg> Scan another</a>
+          <a href="/" class="command-scan-cta">+ New security scan</a>
         </div>
-        <div class="focus-privacy"><span class="green-dot" aria-hidden="true"></span> Local risk scoring <span class="focus-separator" aria-hidden="true">·</span> Destination never visited</div>
+        <div class="studio-statusbar" role="note"><span><i class="studio-live-dot"></i> HEURISTIC ENGINE · LOCAL</span><span><i class="studio-violet-dot"></i> EXACT SHAPLEY ATTRIBUTION</span><span><i class="studio-cyan-dot"></i> OFFLINE RAG</span><span><i class="studio-hollow-dot"></i> CLAUDE · OPT-IN ONLY</span></div>
 
-        <div class="focus-grid">
-          <section class="ops-panel assessment-widget focus-assessment" aria-labelledby="assessmentHeading">
-            <div class="ops-panel-heading"><h2 id="assessmentHeading"><span class="heading-icon" aria-hidden="true">⌖</span> Scan result</h2><span class="panel-mini-label">RULE-BASED ASSESSMENT</span></div>
-            <div id="assessmentEmpty" class="assess-empty">No result yet. <a href="/">Run a scan</a> to view your security assessment.</div>
-            <div id="assessmentContent" hidden>
-              <div class="assessment-upper focus-score-row">
-                <div class="mini-gauge" id="miniGauge" aria-label="Risk score out of 100"><div><strong id="assessmentScore">0</strong><small>RISK / 100</small></div></div>
-                <div class="assessment-copy">
-                  <span class="severity-pill" id="assessmentLevel">Low</span>
-                  <h3 id="assessmentHost">—</h3>
-                  <p id="assessmentSummary"></p>
+        <div class="studio-toolbar">
+          <div class="studio-tabs" role="tablist" aria-label="Dashboard views">
+            <button type="button" role="tab" class="studio-tab is-active" id="tab-overview" aria-controls="panel-overview" aria-selected="true" data-tab="overview">Overview</button>
+            <button type="button" role="tab" class="studio-tab" id="tab-explain" aria-controls="panel-explain" aria-selected="false" data-tab="explain" tabindex="-1">Explainability <span class="tab-label-mini">SHAP</span></button>
+            <button type="button" role="tab" class="studio-tab" id="tab-knowledge" aria-controls="panel-knowledge" aria-selected="false" data-tab="knowledge" tabindex="-1">Knowledge <span class="tab-label-mini">RAG</span></button>
+            <button type="button" role="tab" class="studio-tab" id="tab-llm" aria-controls="panel-llm" aria-selected="false" data-tab="llm" tabindex="-1">AI analysis <span class="tab-label-mini">LLM</span></button>
+            <button type="button" role="tab" class="studio-tab" id="tab-history" aria-controls="panel-history" aria-selected="false" data-tab="history" tabindex="-1">Scan history</button>
+          </div>
+          <span class="studio-data-tag" id="dataSourceTag">NO SCAN SELECTED</span>
+        </div>
+
+        <section role="tabpanel" aria-labelledby="tab-overview" id="panel-overview" class="studio-panel">
+          <div class="studio-hero-grid">
+            <section class="ops-panel studio-score-card" aria-labelledby="assessmentHeading">
+              <div class="ops-panel-heading"><h2 id="assessmentHeading"><span class="heading-icon" aria-hidden="true">◉</span> Current assessment</h2><span class="panel-mini-label">VERIFIED LOCAL OUTPUT</span></div>
+              <div id="assessmentEmpty" class="studio-empty"><span class="empty-glyph">◎</span><strong>No scan yet</strong><p>Start from the scanner to generate a real risk assessment and its explanations.</p><a href="/" class="command-scan-cta">Open scanner</a></div>
+              <div id="assessmentContent" hidden>
+                <div class="studio-score-core">
+                  <div class="mini-gauge" id="miniGauge"><div><strong id="assessmentScore">0</strong><small>RISK / 100</small></div></div>
+                  <div class="assessment-copy studio-score-copy"><span class="severity-pill" id="assessmentLevel">Low</span><h3 id="assessmentHost">—</h3><p id="assessmentSummary"></p><p class="score-method">Deterministic score · not an AI confidence percentage</p></div>
                 </div>
+                <div class="studio-assessment-footer"><span><strong id="assessmentSignals">0</strong> active risk indicators</span><span id="assessmentTime">—</span></div>
+                <button class="outline-action studio-download" id="downloadReport" type="button">↓ Export evidence JSON</button>
               </div>
-              <div class="assessment-bottom"><span><strong id="assessmentSignals">0</strong> detected signals</span><span id="assessmentTime">—</span></div>
-              <p class="focus-score-note">This score indicates structural URL risk signals, not the probability of an attack.</p>
-              <button class="outline-action" id="downloadReport" type="button">↓ Export JSON report</button>
-            </div>
-          </section>
-
-          <section class="ops-panel focus-guidance" aria-labelledby="recommendationHeading">
-            <div class="ops-panel-heading"><h2 id="recommendationHeading"><span class="heading-icon" aria-hidden="true">✧</span> Recommended action</h2><span class="panel-mini-label">NEXT STEP</span></div>
-            <div class="focus-recommendation-icon" aria-hidden="true"><svg viewBox="0 0 64 64" fill="none"><path d="m32 8 20 10v15c0 12-9 20-20 23-11-3-20-11-20-23V18L32 8Z" stroke="currentColor" stroke-width="2.5"/><path d="m23 32 6 6 12-14" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"/></svg></div>
-            <p class="focus-guidance-label">WHAT TO DO</p>
-            <p id="assessmentRecommendation" class="focus-recommendation-text">Run a scan to receive a recommendation based on its actual findings.</p>
-            <div class="focus-guidance-foot">Never enter sensitive information into an unfamiliar destination without independent verification.</div>
-          </section>
-        </div>
-
-        <section class="ops-panel findings-widget focus-findings" aria-labelledby="findingsHeading">
-          <div class="ops-panel-heading"><h2 id="findingsHeading"><span class="heading-icon" aria-hidden="true">◇</span> Why this result?</h2><span class="panel-mini-label">DETECTED INDICATORS</span></div>
-          <p class="ops-hint">Only indicators reported by your scan appear here. Select a finding to read its explanation.</p>
-          <div id="findingCards" class="finding-cards"><p class="findings-empty">Run a scan to view its indicators.</p></div>
+            </section>
+            <section class="ops-panel studio-contribution-panel" aria-labelledby="contributionHeading">
+              <div class="ops-panel-heading"><h2 id="contributionHeading"><span class="heading-icon" aria-hidden="true">▥</span> Risk factor contributions</h2><span class="panel-mini-label">FROM THE ACTUAL SCAN</span></div>
+              <p class="ops-hint">Exact Shapley contributions to the current rule-based score, not detection probability.</p>
+              <div id="contributionBars" class="studio-contributions"><p class="studio-placeholder">Run a scan to generate the contribution chart.</p></div>
+              <button type="button" class="studio-text-action" id="openExplainability">Explore the SHAP waterfall <span aria-hidden="true">↗</span></button>
+            </section>
+          </div>
+          <div class="studio-secondary-grid">
+            <section class="ops-panel studio-findings-card" aria-labelledby="findingsHeading"><div class="ops-panel-heading"><h2 id="findingsHeading"><span class="heading-icon" aria-hidden="true">◇</span> Detected indicators</h2><span class="panel-mini-label">EVIDENCE, NOT VERDICTS</span></div><p class="ops-hint">Expand a finding to inspect what triggered it.</p><div id="findingCards" class="finding-cards"><p class="findings-empty">Run a scan to view actual findings.</p></div></section>
+            <section class="ops-panel studio-action-card" aria-labelledby="recommendationHeading"><div class="ops-panel-heading"><h2 id="recommendationHeading"><span class="heading-icon" aria-hidden="true">✧</span> Recommended action</h2><span class="panel-mini-label">DEFENSIVE GUIDANCE</span></div><div class="studio-action-orb" aria-hidden="true">✦</div><p id="assessmentRecommendation" class="studio-action-copy">Run a scan to see the next step recommended by the local engine.</p><p class="studio-action-footnote">Verify unexpected links independently. CyberGuard does not open submitted destinations.</p><button id="openKnowledge" class="studio-text-action" type="button">View grounded RAG references <span aria-hidden="true">↗</span></button></section>
+          </div>
         </section>
 
-        <details class="focus-history" id="activity">
-          <summary><span><span class="focus-history-icon" aria-hidden="true">▤</span> Previous scans <small>Optional · This browser tab only</small></span><span class="focus-history-chevron" aria-hidden="true">⌄</span></summary>
-          <div class="focus-history-content">
-            <button id="clearHistory" class="outline-action small" type="button">Clear saved scans</button>
-            <div class="table-scroll"><table class="activity-table"><thead><tr><th scope="col">Domain</th><th scope="col">Input</th><th scope="col">Signals</th><th scope="col">Risk level</th><th scope="col">Score</th><th scope="col">Time</th><th scope="col">Details</th></tr></thead><tbody id="activityBody"><tr><td colspan="7" class="table-empty">No scans yet.</td></tr></tbody></table></div>
+        <section role="tabpanel" aria-labelledby="tab-explain" id="panel-explain" class="studio-panel" hidden>
+          <div class="studio-section-intro"><div><span class="studio-kicker">EXPLAINABLE SECURITY / EXACT SHAPLEY VALUES</span><h2>Why did the engine assign this score?</h2><p>The waterfall below is calculated server-side for the same deterministic risk score returned by the scanner.</p></div><span class="studio-tech-chip">EXACT · 9 FLAGS MAX</span></div>
+          <div class="studio-analysis-grid">
+            <section class="ops-panel studio-waterfall-panel" aria-labelledby="shapHeading"><div class="ops-panel-heading"><h3 id="shapHeading"><span class="heading-icon" aria-hidden="true">↗</span> SHAP waterfall</h3><span class="panel-mini-label">POINTS / 100</span></div><div id="shapEmpty" class="studio-placeholder">Scan a link to visualize exact additive Shapley values.</div><svg id="shapWaterfall" viewBox="0 0 760 330" role="img" aria-label="Exact Shapley waterfall contributions" hidden></svg><div id="shapValueTable" class="shap-data-table" aria-live="polite"></div></section>
+            <section class="ops-panel studio-method-panel" aria-labelledby="methodHeading"><div class="ops-panel-heading"><h3 id="methodHeading"><span class="heading-icon" aria-hidden="true">◈</span> Methodology</h3></div><div class="method-stat"><span>MODEL EXPLAINED</span><strong>Deterministic rule engine</strong></div><div class="method-stat"><span>ALGORITHM</span><strong>Exact Shapley enumeration</strong></div><div class="method-stat"><span>BASELINE</span><strong>0 points · all risk flags off</strong></div><div class="method-stat"><span>CALIBRATION</span><strong>Not a probability or ML prediction</strong></div><p class="method-note">These are mathematically exact SHAP-method attributions of the existing heuristic function. No trained model or independently measured accuracy is implied. Under the 100-point cap, Shapley distributes credit fairly across active rules.</p><a href="https://shap.readthedocs.io/en/latest/example_notebooks/api_examples/explainers/Exact.html" class="studio-reference-link" rel="noopener noreferrer" target="_blank">Learn about exact Shapley explanations ↗</a></section>
           </div>
-        </details>
-        <p class="footer-disclaimer focus-disclaimer">CyberGuard applies explainable URL heuristics without opening submitted links. A low score is not proof of safety. No live reputation or calibrated AI prediction is used for the displayed score.</p>
+        </section>
+
+        <section role="tabpanel" aria-labelledby="tab-knowledge" id="panel-knowledge" class="studio-panel" hidden>
+          <div class="studio-section-intro"><div><span class="studio-kicker">RETRIEVAL-AUGMENTED GUIDANCE</span><h2>Evidence you can trace.</h2><p>Curated cybersecurity guidance, ranked locally by analyzer signals and BM25 keyword relevance. This is not a live reputation service.</p></div><span class="studio-tech-chip">OFFLINE · FTC / CISA / OWASP</span></div>
+          <div class="studio-knowledge-layout"><section class="ops-panel studio-knowledge-panel"><div class="ops-panel-heading"><h3><span class="heading-icon" aria-hidden="true">⌕</span> Retrieved guidance</h3><span class="panel-mini-label" id="ragCoverage">NO SCAN SELECTED</span></div><p class="ops-hint">Select a completed scan. The server verifies its short-lived signed evidence token before retrieving reference summaries.</p><div id="ragReferences" class="rag-document-grid"><p class="studio-placeholder">Run a scan to retrieve source-linked security guidance.</p></div></section><aside class="ops-panel studio-retrieval-method"><div class="ops-panel-heading"><h3>Retrieval pipeline</h3></div><div class="retrieval-step"><span>01</span><strong>Verified scan evidence</strong><small>Only known active rule IDs, no full URL.</small></div><div class="retrieval-step"><span>02</span><strong>Hybrid BM25 + rule matching</strong><small>Ranks curated, local summaries.</small></div><div class="retrieval-step"><span>03</span><strong>Cited guidance</strong><small>Original source titles and URLs remain visible.</small></div><p class="method-note">Source matching is evidence coverage, not model accuracy. No live websites are visited automatically.</p></aside></div>
+        </section>
+
+        <section role="tabpanel" aria-labelledby="tab-llm" id="panel-llm" class="studio-panel" hidden>
+          <div class="studio-section-intro"><div><span class="studio-kicker">LLM / OPT-IN ASSISTANCE</span><h2>Turn the evidence into an explanation.</h2><p>Claude can summarize the verified findings and retrieved references. It cannot change the risk score.</p></div><span class="studio-tech-chip">ANTHROPIC MESSAGES API</span></div>
+          <div class="studio-llm-grid"><section class="ops-panel studio-llm-panel"><div class="ops-panel-heading"><h3><span class="heading-icon" aria-hidden="true">✧</span> Claude analysis</h3><span class="panel-mini-label">OPTIONAL REMOTE API</span></div><div class="llm-provider"><span class="ai-orb" aria-hidden="true"></span><div><strong id="aiServiceStatus" role="status">Checking configuration…</strong><small>Server-side secret only · never exposed to the browser</small></div></div><label class="ai-consent studio-ai-consent"><input id="aiConsent" type="checkbox"><span>I consent to send the scanned <strong>hostname, protocol, risk score and indicator IDs</strong> with retrieved public guidance to Anthropic. URL paths, queries, QR images and credentials are not sent. Provider usage may incur charges.</span></label><button type="button" id="aiExplainButton" class="ai-explain-button" disabled>✦ Generate a grounded explanation</button><p id="aiFeedback" class="ai-feedback" role="status">Select a scan and review the consent notice.</p><div id="aiAnswer" class="ai-answer studio-ai-answer" hidden><span class="ai-answer-label">GENERATED EXPLANATION · NOT A SAFETY VERDICT</span><p id="aiSummary"></p><h4>Recommended actions</h4><ul id="aiActions"></ul><p id="aiLimitations" class="ai-limits"></p><div id="aiCitations" class="ai-cited"></div></div></section><aside class="ops-panel studio-retrieval-method"><div class="ops-panel-heading"><h3>What Claude does — and doesn't</h3></div><div class="method-stat"><span>ROLE</span><strong>Evidence-grounded text synthesis</strong></div><div class="method-stat"><span>DATA POLICY</span><strong>Explicit consent before sending</strong></div><div class="method-stat"><span>RISK SCORE</span><strong>Original heuristic unchanged</strong></div><div class="method-stat"><span>CONFIDENCE</span><strong>Not calibrated; no fake percent</strong></div><p class="method-note">Claude needs a separate API key on your computer. With no key, the scanner, SHAP and offline RAG continue to work.</p></aside></div>
+        </section>
+
+        <section role="tabpanel" aria-labelledby="tab-history" id="panel-history" class="studio-panel" hidden>
+          <div class="studio-section-intro"><div><span class="studio-kicker">BROWSER SESSION ANALYTICS</span><h2>Your actual scan activity.</h2><p>Charts use scans completed in this browser tab only, never fictional incident metrics.</p></div><button id="clearHistory" class="outline-action small" type="button">Clear session</button></div>
+          <div class="studio-history-cards"><section class="ops-panel"><span class="studio-kpi-label">COMPLETED SCANS</span><strong id="totalScans" class="studio-kpi">0</strong><small>Stored only in this tab</small></section><section class="ops-panel"><span class="studio-kpi-label">HIGH RISK</span><strong id="highCount" class="studio-kpi accent-red">0</strong><small>Rule score ≥50</small></section><section class="ops-panel"><span class="studio-kpi-label">MEAN RISK SCORE</span><strong id="averageRisk" class="studio-kpi">—</strong><small>Heuristic points / 100</small></section></div>
+          <section class="ops-panel studio-trend-panel" aria-labelledby="historyChartTitle"><div class="ops-panel-heading"><h3 id="historyChartTitle"><span class="heading-icon" aria-hidden="true">⌁</span> Score history</h3><span class="panel-mini-label">LAST 12 COMPLETED SCANS</span></div><svg id="trendChart" viewBox="0 0 860 260" role="img" aria-label="Risk scores for recent completed scans"></svg><p id="trendEmpty" class="studio-placeholder">No completed scans available.</p></section>
+          <section class="ops-panel studio-history-table"><div class="ops-panel-heading"><h3><span class="heading-icon" aria-hidden="true">▤</span> Scan records</h3><span class="panel-mini-label">SELECT TO INSPECT</span></div><div class="table-scroll"><table class="activity-table"><thead><tr><th scope="col">Domain</th><th scope="col">Input</th><th scope="col">Indicators</th><th scope="col">Risk</th><th scope="col">Score</th><th scope="col">Time</th><th scope="col">Action</th></tr></thead><tbody id="activityBody"><tr><td colspan="7" class="table-empty">No scans yet.</td></tr></tbody></table></div></section>
+        </section>
+        <p class="footer-disclaimer studio-disclaimer">Risk scores explain static URL structure. They are not evidence that a site was visited, classified by a trained phishing ML model, or proven malicious/safe. All remote LLM activity requires consent.</p>
       </main>
     </div>
   </div>

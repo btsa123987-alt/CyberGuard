@@ -59,6 +59,7 @@ function addScan(result, inputType, aiContextToken) {
     type: inputType === 'QR' ? 'QR' : 'URL',
     indicators: sanitizedIndicators,
     ai_context_token: safeText(aiContextToken, 2000),
+    explainability: sanitizedShap(result.explainability, safeScore(result.risk_score)),
     at: new Date().toISOString(),
   };
   // A full submitted URL is deliberately never saved, including paths or query strings.
@@ -298,99 +299,305 @@ function initHologram() {
     });
   }
 }
+/* Intelligence Studio: original scan API flow is preserved above this block. */
+function studioSvg(parent, type, attributes={}, value=null) {
+  const element=document.createElementNS(SVG_NS,type);
+  Object.entries(attributes).forEach(([name,v])=>element.setAttribute(name,String(v)));
+  if(value!==null)element.textContent=String(value);
+  parent.appendChild(element);return element;
+}
+function textNode(tag,content,className='') {
+  const el=document.createElement(tag);
+  el.textContent=String(content);
+  if(className)el.className=className;
+  return el;
+}
+function sanitizedShap(value,score) {
+  if(!value || value.method!=='exact_shapley_values' || !Array.isArray(value.features))return null;
+  if(value.features.length>9 || !Number.isFinite(value.baseline) || value.baseline!==0 || value.score!==score)return null;
+  const features=value.features.filter(feature=>feature && typeof feature.key==='string' && typeof feature.label==='string' && Number.isFinite(feature.shap_value) && Math.abs(feature.shap_value)<=100);
+  if(features.length!==value.features.length || Math.abs(features.reduce((a,b)=>a+b.shap_value,0)-score)>0.004)return null;
+  return {method:'exact_shapley_values',baseline:0,score,features:features.map(f=>({key:safeText(f.key,50),label:safeText(f.label,110),shap_value:Number(f.shap_value)}))};
+}
 function renderFindings(item) {
-  const target=$('findingCards');
-  if(!target) return;
-  target.replaceChildren();
-  if(!item){const p=document.createElement('p');p.className='findings-empty';p.textContent='Run a scan to view actual findings.';target.append(p);return;}
-  if(!item.indicators.length){const p=document.createElement('p');p.className='findings-empty';p.textContent='No active structural risk indicators were detected by the current rules. This does not prove the destination is safe.';target.append(p);return;}
+  const target=$('findingCards');target.replaceChildren();
+  if(!item || !item.indicators.length) {
+    target.append(textNode('p',!item?'Run a scan to view verified findings.':'No rules triggered. This does not guarantee the URL is safe.','findings-empty'));
+    return;
+  }
   item.indicators.forEach((signal,index)=>{
     const card=document.createElement('details');card.className='finding-card';if(index===0)card.open=true;
-    const title=document.createElement('summary');
-    const name=document.createElement('span');name.textContent=safeText(signal.title,110);
-    const points=document.createElement('strong');points.textContent=`+${safeScore(signal.points)} pts`;
-    title.append(name,points);
-    const description=document.createElement('p');description.textContent=safeText(signal.detail,250);
-    card.append(title,description);target.append(card);
+    const title=document.createElement('summary');const label=textNode('span',safeText(signal.title,110));
+    const points=textNode('strong',`+${safeScore(signal.points)} rule pts`);
+    title.append(label,points);card.append(title,textNode('p',safeText(signal.detail,250)));target.append(card);
   });
 }
 function renderAssessment(item) {
-  $('assessmentEmpty').hidden = !!item;
-  $('assessmentContent').hidden = !item;
+  $('assessmentEmpty').hidden=!!item;$('assessmentContent').hidden=!item;
   renderFindings(item);
-  if (!item) return;
-  const score = safeScore(item.score);
-  const gauge = $('miniGauge');
-  gauge.style.setProperty('--score-angle', `${score * 3.6}deg`);
-  gauge.style.setProperty('--score-color', COLORS[item.level]);
-  $('assessmentScore').textContent = String(score);
-  $('assessmentHost').textContent = safeText(item.hostname, 253);
-  $('assessmentSummary').textContent = safeText(item.summary, 500);
-  $('assessmentRecommendation').textContent = safeText(item.recommendation, 500) || 'Verify the destination independently before entering sensitive information.';
-  $('assessmentSignals').textContent = String(item.indicators.length);
-  $('assessmentTime').textContent = formatTime(item.at);
-  const pill = $('assessmentLevel');
-  pill.className = `severity-pill ${item.level.toLowerCase()}`;
-  pill.textContent = riskName(item.level);
-  $('downloadReport').onclick = () => {
-    // Do not export the full URL, query, or any secret-bearing URL path.
-    const clean = {type: item.type, hostname: item.hostname, risk_score: score,
-      risk_level: item.level, indicators: item.indicators, recommendation: item.recommendation, analyzed_at: item.at,
-      score_note: 'Uncalibrated heuristic points; no proof of safety or maliciousness.'};
-    const blob = new Blob([JSON.stringify(clean, null, 2)], {type: 'application/json'});
-    const url = URL.createObjectURL(blob);
-    const link = document.createElement('a'); link.href = url; link.download = 'cyberguard-assessment.json';
-    document.body.append(link); link.click(); link.remove();
-    URL.revokeObjectURL(url);
-    announce('Assessment report downloaded.');
+  $('assessmentRecommendation').textContent=item?safeText(item.recommendation,500):'Run a scan to see guidance from the local engine.';
+  if(!item)return;
+  const score=safeScore(item.score);
+  $('miniGauge').style.setProperty('--score-angle',`${score*3.6}deg`);
+  $('miniGauge').style.setProperty('--score-color',COLORS[item.level]);
+  $('assessmentScore').textContent=String(score);
+  $('assessmentHost').textContent=safeText(item.hostname,253);
+  $('assessmentSummary').textContent=safeText(item.summary,500);
+  $('assessmentSignals').textContent=String(item.indicators.length);
+  $('assessmentTime').textContent=formatTime(item.at);
+  $('assessmentLevel').className=`severity-pill ${item.level.toLowerCase()}`;
+  $('assessmentLevel').textContent=riskName(item.level);
+  $('downloadReport').onclick=()=>{
+    const exportData={schema_version:'cyberguard-evidence-v1',input_type:item.type,hostname:item.hostname,risk_score:score,
+      risk_level:item.level,indicators:item.indicators,explainability:item.explainability,
+      recommendation:item.recommendation,analyzed_at:item.at,
+      limitations:'Static heuristic indicators only. Shapley values are exact for this rule scorer, not ML prediction confidence.'};
+    const blob=new Blob([JSON.stringify(exportData,null,2)],{type:'application/json'});
+    const downloadUrl=URL.createObjectURL(blob);
+    const link=document.createElement('a');link.href=downloadUrl;link.download='cyberguard-evidence.json';
+    document.body.append(link);link.click();link.remove();
+    window.setTimeout(()=>URL.revokeObjectURL(downloadUrl),500);
+    announce('Evidence report downloaded.');
   };
 }
-function renderTable(history, onSelect) {
-  const tbody = $('activityBody'); tbody.replaceChildren();
-  if (!history.length) {
-    const tr = document.createElement('tr'), td = document.createElement('td');
-    td.colSpan = 7; td.className = 'table-empty'; td.textContent = 'No scans yet — start with the scanner.';
-    tr.append(td); tbody.append(tr); return;
+function renderAttributions(record) {
+  const area=$('contributionBars');area.replaceChildren();
+  const svg=$('shapWaterfall');svg.replaceChildren();
+  $('shapValueTable').replaceChildren();
+  const x=record && record.explainability;
+  if(!x){
+    area.append(textNode('p','Scan a URL or QR to visualize real feature contributions.','studio-placeholder'));
+    svg.setAttribute('hidden','');$('shapEmpty').hidden=false;$('shapEmpty').textContent=record?'Exact Shapley values are not available for this older scan. Re-run it with the updated engine.':'Scan a link to generate the waterfall.';
+    return;
   }
-  [...history].reverse().forEach((record, displayIndex) => {
-    const tr = document.createElement('tr');
-    const domain = document.createElement('td'); domain.className = 'domain'; domain.textContent = record.hostname;
-    const type = document.createElement('td'); type.textContent = record.type;
-    const indicator = document.createElement('td'); indicator.textContent = String(record.indicators.length);
-    const risk = document.createElement('td'); const pill = document.createElement('span');
-    pill.className = `table-pill ${record.level.toLowerCase()}`; pill.textContent = riskName(record.level); risk.append(pill);
-    const score = document.createElement('td'); score.className = 'score-cell'; score.textContent = String(safeScore(record.score));
-    const time = document.createElement('td'); time.textContent = formatTime(record.at);
-    const details = document.createElement('td'), button = document.createElement('button');
-    button.type = 'button'; button.className = 'table-button'; button.textContent = 'Inspect';
-    button.setAttribute('aria-label', `Inspect scan of ${record.hostname}`);
-    button.addEventListener('click', () => onSelect(history.length - 1 - displayIndex));
-    details.append(button); tr.append(domain, type, indicator, risk, score, time, details); tbody.append(tr);
+  if(!x.features.length){
+    area.append(textNode('p','No active indicators · current rule score is zero.','studio-placeholder'));
+    svg.setAttribute('hidden','');$('shapEmpty').hidden=false;$('shapEmpty').textContent='Baseline: 0. No risk flags were activated.';
+    return;
+  }
+  const max=Math.max(1,...x.features.map(f=>f.shap_value));
+  for(const feature of x.features){
+    const row=document.createElement('div');row.className='contribution-row';
+    const head=document.createElement('div');head.className='contribution-head';
+    head.append(textNode('span',feature.label),textNode('strong',`+${feature.shap_value.toFixed(2)} pts`));
+    const track=document.createElement('div');track.className='contribution-track';
+    const fill=document.createElement('span');fill.className='contribution-fill';fill.style.width=`${100*feature.shap_value/max}%`;track.append(fill);
+    row.append(head,track);area.append(row);
+  }
+  $('shapEmpty').hidden=true;svg.removeAttribute('hidden');
+  const width=760,left=222,right=56,maxWidth=width-left-right,scale=maxWidth/100;
+  const top=45,rowHeight=43,totalHeight=Math.max(285,top+x.features.length*rowHeight+76);
+  svg.setAttribute('viewBox',`0 0 ${width} ${totalHeight}`);
+  [0,25,50,75,100].forEach(tick=>{
+    const xpos=left+tick*scale;
+    studioSvg(svg,'line',{x1:xpos,x2:xpos,y1:25,y2:totalHeight-43,class:'shap-grid'});
+    studioSvg(svg,'text',{x:xpos,y:17,'text-anchor':'middle',class:'shap-tick'},String(tick));
   });
+  let cumulative=0;
+  for(const [index,feature] of x.features.entries()){
+    const y=top+index*rowHeight,from=cumulative;
+    cumulative+=feature.shap_value;
+    studioSvg(svg,'text',{x:12,y:y+21,class:'shap-axis-label'},feature.label.length>30?feature.label.slice(0,27)+'…':feature.label);
+    studioSvg(svg,'rect',{x:left+from*scale,y:y+3,width:Math.max(feature.shap_value*scale,0.5),height:25,rx:5,class:'shap-waterfall-bar'});
+    if(index<x.features.length-1)studioSvg(svg,'line',{x1:left+cumulative*scale,x2:left+cumulative*scale,y1:y+28,y2:y+rowHeight+3,class:'shap-connector'});
+    studioSvg(svg,'text',{x:Math.min(left+cumulative*scale+7,width-28),y:y+21,class:'shap-value-label'},`+${feature.shap_value.toFixed(1)}`);
+    const tr=document.createElement('div');tr.className='shap-data-row';
+    tr.append(textNode('span',feature.label),textNode('strong',`+${feature.shap_value.toFixed(3)} points`));$('shapValueTable').append(tr);
+  }
+  const lastY=top+x.features.length*rowHeight+24;
+  studioSvg(svg,'line',{x1:left,x2:left+x.score*scale,y1:lastY-14,y2:lastY-14,class:'shap-total-line'});
+  studioSvg(svg,'text',{x:12,y:lastY+7,class:'shap-axis-label'},'Final risk score');
+  studioSvg(svg,'text',{x:left+x.score*scale+8,y:lastY+7,class:'shap-final-label'},`${x.score}/100`);
+  const total=document.createElement('div');total.className='shap-data-total';total.append(textNode('span','Baseline 0 + Shapley values'),textNode('strong',`${x.score.toFixed(0)} / 100`));
+  $('shapValueTable').append(total);
 }
-function initDashboard() {
-  let history = readHistory();
-  let selected = history.length - 1;
-  function render() {
-    history = readHistory();
-    if (selected >= history.length) selected = history.length - 1;
-    const record = selected >= 0 ? history[selected] : null;
-    renderAssessment(record);
-    if (!record) $('assessmentRecommendation').textContent = 'Run a scan to receive a recommendation based on its actual findings.';
-    renderTable(history, index => {
-      selected = index;
-      renderAssessment(history[selected]);
-      document.querySelector('.focus-assessment').scrollIntoView({behavior: window.matchMedia('(prefers-reduced-motion: reduce)').matches ? 'auto' : 'smooth', block: 'start'});
-      announce(`Now inspecting ${history[selected].hostname}`);
+function renderHistory(history, onSelect){
+  $('totalScans').textContent=String(history.length);
+  $('highCount').textContent=String(history.filter(r=>r.level==='HIGH').length);
+  $('averageRisk').textContent=history.length?(history.reduce((a,r)=>a+safeScore(r.score),0)/history.length).toFixed(1):'—';
+  const graph=$('trendChart');graph.replaceChildren();
+  const subset=history.slice(-12);
+  $('trendEmpty').hidden=!!subset.length;
+  if(subset.length){
+    const x0=55,y0=18,bottom=215,width=790,height=197;
+    for(const tick of [0,25,50,75,100]){
+      const y=bottom-tick/100*height;
+      studioSvg(graph,'line',{x1:x0,x2:width+42,y1:y,y2:y,class:'shap-grid'});
+      studioSvg(graph,'text',{x:44,y:y+4,'text-anchor':'end',class:'shap-tick'},tick);
+    }
+    const step=width/subset.length;
+    subset.forEach((item,i)=>{
+      const score=safeScore(item.score),h=score*height/100;
+      studioSvg(graph,'rect',{x:x0+i*step+8,y:bottom-h,width:Math.max(step-16,8),height:Math.max(h,2),rx:5,fill:COLORS[item.level]});
+      studioSvg(graph,'text',{x:x0+i*step+step/2,y:bottom-h-7,'text-anchor':'middle',class:'shap-value-label'},score);
+      studioSvg(graph,'text',{x:x0+i*step+step/2,y:242,'text-anchor':'middle',class:'shap-tick'},i+1);
     });
   }
-  $('clearHistory').addEventListener('click', () => {
-    try { sessionStorage.removeItem(SESSION_KEY); } catch (_error) { /* blocked storage */ }
-    selected = -1;
-    render();
-    announce('Previous scans cleared.');
+  const tbody=$('activityBody');tbody.replaceChildren();
+  if(!history.length){
+    const tr=document.createElement('tr'),td=textNode('td','No scans yet — start with the scanner.','table-empty');td.colSpan=7;tr.append(td);tbody.append(tr);return;
+  }
+  [...history].reverse().forEach((record,i)=>{
+    const tr=document.createElement('tr');const domain=textNode('td',record.hostname,'domain');
+    const type=textNode('td',record.type),flags=textNode('td',record.indicators.length);
+    const risk=document.createElement('td'),pill=textNode('span',riskName(record.level),`table-pill ${record.level.toLowerCase()}`);risk.append(pill);
+    const points=textNode('td',safeScore(record.score),'score-cell'),time=textNode('td',formatTime(record.at));
+    const act=document.createElement('td'),button=textNode('button','Inspect','table-button');button.type='button';
+    button.setAttribute('aria-label',`Inspect scan of ${record.hostname}`);
+    button.addEventListener('click',()=>onSelect(history.length-1-i));act.append(button);
+    tr.append(domain,type,flags,risk,points,time,act);tbody.append(tr);
+  });
+}
+function initDashboard(){
+  let history=readHistory(),selected=history.length-1,activeTab='overview',knowledgeCache=new Map(),referenceIndex=new Map();
+  let configured=false,configurationKnown=false,aiPending=false,latestKnowledgeToken='',knowledgeInFlight=null;
+  const tabs=[...document.querySelectorAll('.studio-tab')];
+  const panelNames=['overview','explain','knowledge','llm','history'];
+  const getSelected=()=>selected>=0?history[selected]:null;
+  const feedback=(message)=>{$('aiFeedback').textContent=message;};
+  const currentToken=()=>getSelected()?.ai_context_token||'';
+  function selectTab(id,focus=false){
+    if(!panelNames.includes(id))return;
+    activeTab=id;
+    for(const tab of tabs){
+      const active=tab.dataset.tab===id;
+      tab.classList.toggle('is-active',active);tab.setAttribute('aria-selected',String(active));tab.tabIndex=active?0:-1;
+      if(active&&focus)tab.focus();
+    }
+    for(const name of panelNames)$(`panel-${name}`).hidden=name!==id;
+    if(id==='knowledge')fetchKnowledge();
+    if(id==='llm')ensureClaudeStatus();
+    announce(`${id==='llm'?'AI analysis':id} tab opened`);
+  }
+  tabs.forEach((tab,index)=>{
+    tab.addEventListener('click',()=>selectTab(tab.dataset.tab));
+    tab.addEventListener('keydown',event=>{
+      const key=event.key;
+      if(!['ArrowRight','ArrowLeft','Home','End'].includes(key))return;
+      event.preventDefault();
+      let n=index;
+      if(key==='ArrowRight')n=(index+1)%tabs.length;
+      if(key==='ArrowLeft')n=(index-1+tabs.length)%tabs.length;
+      if(key==='Home')n=0;
+      if(key==='End')n=tabs.length-1;
+      selectTab(tabs[n].dataset.tab,true);
+    });
+  });
+  $('openExplainability').addEventListener('click',()=>selectTab('explain',true));
+  $('openKnowledge').addEventListener('click',()=>selectTab('knowledge',true));
+  function updateButton(){
+    $('aiExplainButton').disabled=aiPending||!configured||!currentToken()||!$('aiConsent').checked;
+  }
+  function clearAnswer(){
+    $('aiAnswer').hidden=true;$('aiSummary').textContent='';$('aiActions').replaceChildren();$('aiLimitations').textContent='';$('aiCitations').replaceChildren();
+  }
+  function clearRefs(){referenceIndex=new Map();$('ragReferences').replaceChildren();$('ragCoverage').textContent='NO SCAN SELECTED';}
+  function renderReferences(result){
+    clearRefs();
+    if(!result){$('ragReferences').append(textNode('p','Select a completed scan to retrieve guidance.','studio-placeholder'));return;}
+    const coverage=result.evidence_coverage;
+    $('ragCoverage').textContent=`${coverage.matched_flags} / ${coverage.active_flags} ACTIVE FLAGS COVERED`;
+    (result.documents||[]).forEach((doc,index)=>{
+      referenceIndex.set(doc.id,doc);
+      const article=document.createElement('article');article.className='rag-reference-card';
+      article.append(textNode('div',`SOURCE ${String(index+1).padStart(2,'0')} · ${safeText(doc.source,95)}`,'rag-source'),textNode('h4',safeText(doc.title,160)),textNode('p',safeText(doc.text,380)));
+      const matches=textNode('div',(doc.matched_indicators||[]).length?`MATCHED RULES: ${doc.matched_indicators.join(', ')}`:'GENERAL ADVICE','rag-match');
+      const score=textNode('div',`Reference ranking: ${Number(doc.ranking_score||0).toFixed(2)} · BM25 ${Number(doc.lexical_bm25||0).toFixed(2)}`,'rag-rank');
+      const link=textNode('a','Open original guidance ↗','studio-reference-link');
+      // URLs originate from a fixed, audited backend allowlist of official sources.
+      if(/^https:\/\/(consumer\.ftc\.gov|www\.cisa\.gov|cheatsheetseries\.owasp\.org)\//.test(doc.url||'')){
+        link.href=doc.url;link.target='_blank';link.rel='noopener noreferrer';
+      }else{link.removeAttribute('href');link.textContent='Reference URL not trusted';}
+      article.append(matches,score,link);$('ragReferences').append(article);
+    });
+  }
+  async function fetchKnowledge(){
+    const token=currentToken();
+    if(!token){renderReferences(null);return;}
+    if(knowledgeCache.has(token)){renderReferences(knowledgeCache.get(token));return;}
+    if(knowledgeInFlight===token)return;
+    knowledgeInFlight=token;latestKnowledgeToken=token;
+    $('ragReferences').replaceChildren(textNode('p','Retrieving signed scan references locally…','studio-placeholder'));
+    try{
+      const response=await fetch('/api/ai/knowledge',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({token})});
+      const result=await response.json();
+      if(!response.ok||!result.success)throw new Error(safeText(result.message,150)||'Reference lookup failed');
+      knowledgeCache.set(token,result.result);
+      if(currentToken()===token)renderReferences(result.result);
+    }catch(error){
+      if(currentToken()===token){clearRefs();$('ragReferences').append(textNode('p',error.message||'Retrieval failed. Re-run the scan.','studio-error'));}
+    }finally{if(knowledgeInFlight===token)knowledgeInFlight=null;}
+  }
+  async function ensureClaudeStatus(){
+    updateButton();
+    if(configurationKnown)return;
+    try{
+      const response=await fetch('/api/ai/status');
+      if(!response.ok)throw new Error('Configuration unavailable');
+      const data=await response.json();
+      configured=!!data.claude_configured;
+      $('aiServiceStatus').textContent=configured?`Claude ready · ${safeText(data.model,80)} · explicit consent required`:'Claude API key not configured · offline SHAP + RAG available';
+      configurationKnown=true;
+      feedback(configured?'Check the consent box to enable the optional Claude request.':'To enable Claude, set ANTHROPIC_API_KEY on your computer. No API key is needed for the rest of the platform.');
+    }catch(_error){
+      $('aiServiceStatus').textContent='Claude status unavailable · offline scans still work';
+      feedback('Could not check the optional provider. Local analysis is unaffected.');
+    }
+    updateButton();
+  }
+  $('aiConsent').addEventListener('change',updateButton);
+  $('aiExplainButton').addEventListener('click',async()=>{
+    const token=currentToken();
+    if(!configured||!$('aiConsent').checked||!token||aiPending)return;
+    aiPending=true;updateButton();clearAnswer();feedback('Requesting a grounded Claude explanation. The original score will not change.');
+    try{
+      const response=await fetch('/api/ai/assess',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({token,consent:true})});
+      const data=await response.json();
+      if(!response.ok||!data.success||!data.result)throw new Error(safeText(data.message,210)||'Claude request failed');
+      if(currentToken()!==token)return;
+      const answer=data.result;
+      $('aiSummary').textContent=safeText(answer.summary,450);
+      const list=$('aiActions');list.replaceChildren();
+      (answer.recommendations||[]).slice(0,3).forEach(value=>list.append(textNode('li',safeText(value,280))));
+      $('aiLimitations').textContent=safeText(answer.limitations,340);
+      $('aiCitations').replaceChildren();
+      const knowledge=knowledgeCache.get(token);
+      if(knowledge){
+        const byId=new Map(knowledge.documents.map(r=>[r.id,r]));
+        (answer.citation_ids||[]).forEach(id=>{
+          const doc=byId.get(id);if(!doc)return;
+          const row=textNode('a',safeText(doc.title,145)+' ↗','studio-reference-link');
+          if(/^https:\/\/(consumer\.ftc\.gov|www\.cisa\.gov|cheatsheetseries\.owasp\.org)\//.test(doc.url)){
+            row.href=doc.url;row.rel='noopener noreferrer';row.target='_blank';$('aiCitations').append(row);
+          }
+        });
+      }
+      $('aiAnswer').hidden=false;
+      feedback(`Claude explanation ready (${safeText(answer.model,80)}). Model confidence has not been calibrated.`);
+    }catch(error){if(currentToken()===token)feedback(error.message||'Claude unavailable; scan results are still available.');}
+    finally{aiPending=false;updateButton();}
+  });
+  function selectRecord(index){
+    selected=index;
+    $('aiConsent').checked=false;clearAnswer();clearRefs();
+    render();selectTab('overview');
+    document.querySelector('.studio-intro').scrollIntoView({behavior:window.matchMedia('(prefers-reduced-motion: reduce)').matches?'auto':'smooth',block:'start'});
+    announce(`Inspecting ${history[selected].hostname}`);
+  }
+  function render(){
+    history=readHistory();if(selected>=history.length)selected=history.length-1;
+    const record=getSelected();
+    renderAssessment(record);renderAttributions(record);renderHistory(history,selectRecord);
+    $('dataSourceTag').textContent=record?`${record.type} · ${safeText(record.hostname,48)}`:'NO SCAN SELECTED';
+    updateButton();
+    if(activeTab==='knowledge')fetchKnowledge();
+  }
+  $('clearHistory').addEventListener('click',()=>{
+    try{sessionStorage.removeItem(SESSION_KEY);}catch(_error){}
+    selected=-1;knowledgeCache.clear();latestKnowledgeToken='';
+    $('aiConsent').checked=false;clearAnswer();clearRefs();render();announce('Session history cleared.');
   });
   render();
 }
-if (document.body.dataset.page === 'scanner') { initHologram(); initScanner(); }
-if (document.body.dataset.page === 'dashboard') initDashboard();
+if(document.body.dataset.page==='scanner'){initHologram();initScanner();}
+if(document.body.dataset.page==='dashboard')initDashboard();
