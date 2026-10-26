@@ -150,6 +150,7 @@ def test_ai_integration_does_not_change_legacy_scans(client):
     assert response.json['result']['score_type'] == 'uncalibrated_heuristic_points'
     assert 'ai_context_token' in response.json
     html = client.get('/dashboard').get_data(as_text=True)
-    assert 'id="aiExplainButton"' in html
-    assert 'id="ragReferences"' in html
-    assert 'Not calibrated' in html
+    assert 'id="aiExplainButton"' not in html
+    assert 'id="ragReferences"' not in html
+    assert 'id="assessmentScore"' in html
+    assert 'id="findingCards"' in html

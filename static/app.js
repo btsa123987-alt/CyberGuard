@@ -251,121 +251,12 @@ function initScanner() {
   });
 }
 
-function svgEl(tag, attrs = {}, text = null) {
-  const item = document.createElementNS(SVG_NS, tag);
-  for (const [key, value] of Object.entries(attrs)) item.setAttribute(key, String(value));
-  if (text !== null) item.textContent = String(text);
-  return item;
-}
 function formatTime(iso) {
   const time = new Date(iso);
   return Number.isNaN(time.getTime()) ? '—' : time.toLocaleTimeString('en-US', {hour: '2-digit', minute: '2-digit'});
 }
 function riskName(level) {
   return level === 'HIGH' ? 'High risk' : level === 'ELEVATED' ? 'Elevated' : 'Low';
-}
-function renderTimeline(history) {
-  const svg = $('trendChart');
-  svg.replaceChildren();
-  const w = 640, h = 248, left = 42, right = 22, top = 18, bottom = 34;
-  const pw = w - left - right, ph = h - top - bottom;
-  for (let value = 0; value <= 100; value += 25) {
-    const y = top + (100 - value) / 100 * ph;
-    svg.append(svgEl('line', {x1: left, y1: y, x2: w - right, y2: y, stroke: '#3a3345', 'stroke-dasharray': value ? '4 7' : '0', 'stroke-width': 1}));
-    svg.append(svgEl('text', {x: left - 11, y: y + 4, 'text-anchor': 'end', fill: '#8b809d', 'font-size': 11}, value));
-  }
-  if (!history.length) { $('trendEmpty').hidden = false; return; }
-  $('trendEmpty').hidden = true;
-  const entries = history.slice(-12);
-  const points = entries.map((r, i) => ({
-    x: entries.length === 1 ? left + pw / 2 : left + (i / (entries.length - 1)) * pw,
-    y: top + (100 - safeScore(r.score)) / 100 * ph,
-    score: safeScore(r.score),
-  }));
-  const line = points.map((p, i) => `${i ? 'L' : 'M'}${p.x.toFixed(1)},${p.y.toFixed(1)}`).join(' ');
-  const area = `${line} L${points[points.length - 1].x},${top + ph} L${points[0].x},${top + ph} Z`;
-  const defs = svgEl('defs');
-  const gradient = svgEl('linearGradient', {id: 'riskAreaFill', x1: 0, y1: 0, x2: 0, y2: 1});
-  gradient.append(svgEl('stop', {offset: '0%', 'stop-color': '#a881f5', 'stop-opacity': '.26'}), svgEl('stop', {offset: '100%', 'stop-color': '#a881f5', 'stop-opacity': '.005'}));
-  defs.append(gradient); svg.append(defs);
-  svg.append(svgEl('path', {d: area, fill: 'url(#riskAreaFill)'}));
-  svg.append(svgEl('path', {d: line, stroke: '#bb94ff', fill: 'none', 'stroke-width': 3, 'stroke-linejoin': 'round', 'stroke-linecap': 'round'}));
-  points.forEach((point, index) => {
-    const circle = svgEl('circle', {cx: point.x, cy: point.y, r: 5, fill: '#c5a2ff', stroke: '#181420', 'stroke-width': 3});
-    circle.append(svgEl('title', {}, `Scan ${history.length - entries.length + index + 1}: ${point.score}/100`));
-    svg.append(circle);
-  });
-  const labels = [...new Set([0, Math.floor((entries.length - 1) / 2), entries.length - 1])];
-  labels.forEach(index => {
-    const point = points[index];
-    svg.append(svgEl('text', {x: point.x, y: h - 9, 'text-anchor': 'middle', fill: '#8e859e', 'font-size': 11}, `#${history.length - entries.length + index + 1}`));
-  });
-}
-function renderSeverityBars(history) {
-  const chart = $('severityChart');
-  if (!chart) return;
-  chart.replaceChildren();
-  const entries = history.slice(-8);
-  const empty = $('severityEmpty');
-  if (empty) empty.hidden = entries.length > 0;
-  const width = 460, height = 270, left = 38, right = 12, top = 20, bottom = 33;
-  const chartWidth = width - left - right, chartHeight = height - top - bottom;
-  [0,25,50,75,100].forEach(value => {
-    const y = top + (100 - value) / 100 * chartHeight;
-    chart.append(svgEl('line',{x1:left,y1:y,x2:width-right,y2:y,stroke:'#3a3442','stroke-width':'1','stroke-dasharray':value===0?'0':'4 6'}));
-    chart.append(svgEl('text',{x:left-9,y:y+4,'text-anchor':'end',fill:'#c2b1d0','font-size':'12'},value));
-  });
-  if (!entries.length) return;
-  const slot = chartWidth / entries.length;
-  const barWidth = Math.min(29, slot * .55);
-  entries.forEach((item,index) => {
-    const score = safeScore(item.score);
-    const barHeight = Math.max(2,score / 100 * chartHeight);
-    const x = left + (index + .5) * slot - barWidth / 2;
-    const bar = svgEl('rect', {x, y: top + chartHeight - barHeight, width:barWidth,height:barHeight,rx:3,fill:COLORS[item.level]});
-    bar.append(svgEl('title',{},`Scan ${history.length - entries.length + index + 1} (${riskName(item.level)}): ${score}/100`));
-    chart.append(bar);
-    chart.append(svgEl('text',{x:x+barWidth/2,y:height-8,'text-anchor':'middle',fill:'#c7b8d4','font-size':'12'},`#${history.length - entries.length + index + 1}`));
-  });
-}
-function renderIncidentFeed(history) {
-  const container = $('incidentList');
-  if (!container) return;
-  container.replaceChildren();
-  if (!history.length) {
-    const empty = document.createElement('p'); empty.className = 'incidents-empty';
-    empty.textContent = 'Run your first scan to see activity here.';
-    container.append(empty); return;
-  }
-  [...history].slice(-4).reverse().forEach(item => {
-    const row = document.createElement('div'); row.className = 'incident-item';
-    const marker = document.createElement('span'); marker.className = `incident-level ${item.level.toLowerCase()}`;
-    marker.setAttribute('aria-hidden','true');
-    const main = document.createElement('div'); main.className='incident-main';
-    const name = document.createElement('strong'); name.textContent = safeText(item.hostname,253);
-    const subtitle = document.createElement('small'); subtitle.textContent = `${riskName(item.level)} · ${formatTime(item.at)}`;
-    main.append(name,subtitle);
-    const score = document.createElement('span');score.className='incident-score';score.textContent=`${safeScore(item.score)}/100`;
-    row.append(marker,main,score);container.append(row);
-  });
-}
-function renderDonut(counts) {
-  const total = counts.HIGH + counts.ELEVATED + counts.LOW;
-  $('donutTotal').textContent = String(total);
-  $('highCount').textContent = String(counts.HIGH);
-  $('elevatedCount').textContent = String(counts.ELEVATED);
-  $('lowCount').textContent = String(counts.LOW);
-  const circumference = 2 * Math.PI * 78;
-  let offset = 0;
-  const target = $('donutSegments'); target.replaceChildren();
-  if (!total) return;
-  for (const level of ['HIGH', 'ELEVATED', 'LOW']) {
-    if (counts[level] === 0) continue;
-    const length = circumference * counts[level] / total;
-    const circle = svgEl('circle', {cx: 110, cy: 110, r: 78, class: 'donut-segment', stroke: COLORS[level], 'stroke-dasharray': `${length} ${circumference - length}`, 'stroke-dashoffset': -offset});
-    circle.append(svgEl('title', {}, `${riskName(level)}: ${counts[level]} scans`));
-    target.append(circle); offset += length;
-  }
 }
 /* Hologram is decorative: a deterministic non-scannable QR-like grid, never a QR
    encoding of a destination. No external requests or third-party rendering code. */
@@ -435,8 +326,7 @@ function renderAssessment(item) {
   $('assessmentScore').textContent = String(score);
   $('assessmentHost').textContent = safeText(item.hostname, 253);
   $('assessmentSummary').textContent = safeText(item.summary, 500);
-  const recommendation=$('assessmentRecommendation');
-  if (recommendation) recommendation.textContent = safeText(item.recommendation, 500) || 'Verify the destination independently before entering sensitive information.';
+  $('assessmentRecommendation').textContent = safeText(item.recommendation, 500) || 'Verify the destination independently before entering sensitive information.';
   $('assessmentSignals').textContent = String(item.indicators.length);
   $('assessmentTime').textContent = formatTime(item.at);
   const pill = $('assessmentLevel');
@@ -454,31 +344,6 @@ function renderAssessment(item) {
     URL.revokeObjectURL(url);
     announce('Assessment report downloaded.');
   };
-}
-function renderSignals(history) {
-  const map = new Map();
-  history.forEach(record => record.indicators.forEach(indicator => {
-    const key = safeText(indicator.key, 50);
-    if (!key) return;
-    const existing = map.get(key) || {title: safeText(indicator.title, 110) || key, count: 0};
-    existing.count += 1;
-    map.set(key, existing);
-  }));
-  const entries = [...map.values()].sort((a, b) => b.count - a.count).slice(0, 5);
-  const bars = $('signalBars'); bars.replaceChildren();
-  if (!entries.length) {
-    const empty = document.createElement('p'); empty.className = 'widget-empty';
-    empty.textContent = 'No active indicators recorded yet.'; bars.append(empty); return;
-  }
-  const maximum = entries[0].count;
-  entries.forEach(entry => {
-    const row = document.createElement('div'); row.className = 'signal-entry';
-    const title = document.createElement('span'); title.className = 'signal-label'; title.textContent = entry.title;
-    const count = document.createElement('span'); count.className = 'signal-value'; count.textContent = String(entry.count);
-    const track = document.createElement('div'); track.className = 'signal-track';
-    const fill = document.createElement('span'); fill.className = 'signal-fill'; fill.style.width = `${entry.count / maximum * 100}%`;
-    track.append(fill); row.append(title, count, track); bars.append(row);
-  });
 }
 function renderTable(history, onSelect) {
   const tbody = $('activityBody'); tbody.replaceChildren();
@@ -503,152 +368,27 @@ function renderTable(history, onSelect) {
     details.append(button); tr.append(domain, type, indicator, risk, score, time, details); tbody.append(tr);
   });
 }
-/* Evidence enrichment: local RAG works without AI credentials. A separate explicit
-   user action with checkbox consent is required for each Claude API invocation. */
-function initAIInsights(getSelection) {
-  const refs = $('ragReferences');
-  if (!refs) return {select: () => {}};
-  const button = $('aiExplainButton');
-  const checkbox = $('aiConsent');
-  const feedback = $('aiFeedback');
-  const service = $('aiServiceStatus');
-  const answer = $('aiAnswer');
-  let configured = false;
-  let currentToken = '';
-  let sequence = 0;
-  let pending = false;
-
-  const feedbackText = message => {feedback.textContent = message; announce(message);};
-  const updateButton = () => {button.disabled = pending || !configured || !currentToken || !checkbox.checked;};
-  const clearAnswer = () => {answer.hidden = true; $('aiSummary').textContent = ''; $('aiActions').replaceChildren();};
-
-  function showReferences(data) {
-    refs.replaceChildren();
-    const coverage = data && data.evidence_coverage;
-    $('ragCoverage').textContent = coverage ? `${coverage.matched_flags} of ${coverage.active_flags} rule flags matched to guidance` : 'No evidence';
-    if (!data || !Array.isArray(data.documents) || !data.documents.length) {
-      const p=document.createElement('p');p.className='ai-empty';p.textContent='No relevant local knowledge found.';refs.append(p);return;
-    }
-    data.documents.forEach(doc => {
-      const item=document.createElement('div');item.className='ai-reference';
-      const top=document.createElement('div');top.className='ai-reference-top';
-      const title=document.createElement('strong');title.textContent=safeText(doc.title,145);
-      const source=document.createElement('span');source.textContent=safeText(doc.source,92);
-      top.append(title,source);
-      const description=document.createElement('p');description.textContent=safeText(doc.text,400);
-      const link=document.createElement('a');link.textContent='Read original guidance ↗';
-      const url=safeText(doc.url,400);
-      if(/^https:\/\/(?:consumer\.ftc\.gov|www\.cisa\.gov|cheatsheetseries\.owasp\.org)\//.test(url)) {
-        link.href=url; link.target='_blank';link.rel='noopener noreferrer';
-      } else { link.textContent='Reference unavailable'; }
-      item.append(top,description,link);refs.append(item);
-    });
-  }
-  function resetSelection() {
-    currentToken = '';
-    sequence += 1;
-    checkbox.checked = false;
-    clearAnswer();
-    refs.replaceChildren();
-    const p=document.createElement('p');p.className='ai-empty';p.textContent='Scan a URL or QR to see related published guidance.';refs.append(p);
-    $('ragCoverage').textContent='Run a scan first';
-    feedbackText('Select a completed scan to retrieve guidance.');
-    updateButton();
-  }
-  async function select(record) {
-    if (!record || !record.ai_context_token) { resetSelection(); return; }
-    currentToken = record.ai_context_token;
-    const order=++sequence;
-    checkbox.checked = false;
-    clearAnswer();
-    refs.replaceChildren();
-    const msg=document.createElement('p');msg.className='ai-empty';msg.textContent='Retrieving local reference guidance…';refs.append(msg);
-    $('ragCoverage').textContent='Matching rule flags…';
-    updateButton();
-    try {
-      const response=await fetch('/api/ai/knowledge',{
-        method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({token:currentToken})
-      });
-      const payload=await response.json();
-      if (order!==sequence) return;
-      if(!response.ok || !payload.success)throw new Error(safeText(payload.message,190)||'Knowledge retrieval failed.');
-      showReferences(payload.result);
-      feedbackText(configured ? 'Official reference guidance is ready. Claude requires explicit consent.' : 'Reference guidance ready. Add an Anthropic API key on the server to enable Claude.');
-    } catch(error) {
-      if(order!==sequence)return;
-      showReferences(null); $('ragCoverage').textContent='Retrieval unavailable';
-      feedbackText(error.message||'Knowledge retrieval failed. Start a fresh scan.');
-    }
-  }
-  checkbox.addEventListener('change',updateButton);
-  button.addEventListener('click', async () => {
-    if (!configured || !checkbox.checked || !currentToken || pending) return;
-    const token = currentToken;
-    const order = sequence;
-    pending=true;updateButton();clearAnswer(); feedbackText('Claude is generating an explanation. Your local risk score will not change.');
-    try {
-      const response=await fetch('/api/ai/assess',{
-        method:'POST',headers:{'Content-Type':'application/json'},
-        body:JSON.stringify({token,consent:true})
-      });
-      const data=await response.json();
-      if(order!==sequence)return;
-      if (!response.ok || !data.success || !data.result) throw new Error(safeText(data.message,210)||'Claude analysis failed.');
-      const result=data.result;
-      $('aiSummary').textContent=safeText(result.summary,450);
-      const actions=$('aiActions');actions.replaceChildren();
-      (Array.isArray(result.recommendations)?result.recommendations:[]).slice(0,3).forEach(action=>{
-        const li=document.createElement('li');li.textContent=safeText(action,280);actions.append(li);
-      });
-      $('aiLimitations').textContent=safeText(result.limitations,350);
-      answer.hidden=false;
-      feedbackText(`Claude explanation received (${safeText(result.model,75)}). This is not a verified detection or calibrated probability.`);
-    } catch(error) {
-      if(order!==sequence)return;
-      feedbackText(error.message||'Claude could not respond. Local analysis remains available.');
-    } finally {pending=false;updateButton();}
-  });
-  fetch('/api/ai/status').then(r=>r.json()).then(info=>{
-    configured=!!info.claude_configured;
-    service.textContent = configured ? `Claude configured · ${safeText(info.model,80)} · optional` : 'Claude not configured · offline RAG available';
-    updateButton();
-    if(configured)feedback.textContent='Check the consent box to enable the Claude explanation button.';
-  }).catch(()=>{
-    service.textContent='Claude status unavailable · local scanner still works';updateButton();
-  });
-  resetSelection();
-  return {select};
-}
-
 function initDashboard() {
   let history = readHistory();
   let selected = history.length - 1;
-  const aiInsights = initAIInsights(() => history[selected] || null);
   function render() {
     history = readHistory();
-    const counts = {HIGH: 0, ELEVATED: 0, LOW: 0};
-    let sum = 0, indicators = 0;
-    history.forEach(record => { counts[record.level]++; sum += safeScore(record.score); indicators += record.indicators.length; });
-    $('totalScans').textContent = String(history.length);
-    $('highScans').textContent = String(counts.HIGH);
-    $('averageRisk').textContent = history.length ? String(Math.round(sum / history.length)) : '0';
-    $('totalSignals').textContent = String(indicators);
-    renderTimeline(history); renderSeverityBars(history); renderDonut(counts); renderSignals(history); renderIncidentFeed(history);
     if (selected >= history.length) selected = history.length - 1;
-    renderAssessment(history[selected] || null);
-    aiInsights.select(history[selected] || null);
+    const record = selected >= 0 ? history[selected] : null;
+    renderAssessment(record);
+    if (!record) $('assessmentRecommendation').textContent = 'Run a scan to receive a recommendation based on its actual findings.';
     renderTable(history, index => {
-      selected = index; renderAssessment(history[selected]); aiInsights.select(history[selected]);
-      $('assessmentHeading').textContent = 'Selected assessment';
-      document.querySelector('.assessment-widget').scrollIntoView({behavior: 'smooth', block: 'center'});
+      selected = index;
+      renderAssessment(history[selected]);
+      document.querySelector('.focus-assessment').scrollIntoView({behavior: window.matchMedia('(prefers-reduced-motion: reduce)').matches ? 'auto' : 'smooth', block: 'start'});
       announce(`Now inspecting ${history[selected].hostname}`);
     });
   }
   $('clearHistory').addEventListener('click', () => {
     try { sessionStorage.removeItem(SESSION_KEY); } catch (_error) { /* blocked storage */ }
     selected = -1;
-    $('assessmentHeading').textContent = 'Risk assessment';
-    render(); announce('Session history cleared.');
+    render();
+    announce('Previous scans cleared.');
   });
   render();
 }

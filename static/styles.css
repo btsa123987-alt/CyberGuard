@@ -303,3 +303,62 @@ body{background:radial-gradient(ellipse 780px 480px at 77% 5%,rgba(79,36,177,.22
 .ai-explain-button:hover:not(:disabled){filter:brightness(1.13);box-shadow:0 10px 26px #4b65fb55}.ai-explain-button:disabled{opacity:.45;cursor:not-allowed;box-shadow:none}
 .ai-feedback,.ai-privacy-note{font-size:11px;line-height:1.65;color:#adbfdd;overflow-wrap:anywhere}.ai-answer{border:1px solid #5164b0;background:#131b3c;border-radius:12px;padding:17px;margin:12px 0}.ai-answer p,.ai-answer li{font-size:12px;line-height:1.7;color:#e1eaff}.ai-answer h3{font-size:12px;margin-top:13px}.ai-answer ul{padding-left:21px}.ai-answer .ai-limits{font-size:11px;color:#afc1dc}
 @media(max-width:580px){.ai-capability-grid{grid-template-columns:1fr}.ai-live-tag{font-size:8px}.ai-reference-top{gap:5px}}
+
+
+/* Focused results page — intentionally removes auxiliary analytics and AI widgets.
+   Security engine, optional API endpoints and QR analysis remain unchanged. */
+body[data-page="dashboard"] {background:radial-gradient(circle at 58% -22%,rgba(111,65,220,.21),transparent 48%),#0c0b13}
+.focused-main{max-width:1350px;padding-top:48px}
+.focused-intro{margin-bottom:24px}
+.focused-intro h1{font-size:clamp(34px,4vw,56px);letter-spacing:-.045em}
+.focused-intro p{font-size:14px}
+.focus-privacy{display:flex;flex-wrap:wrap;gap:11px;align-items:center;color:#b8b0c8;font-size:12px;margin-bottom:24px}
+.focus-privacy .green-dot{width:7px;height:7px;flex-basis:7px}
+.focus-separator{color:#6b5a86}
+.focus-grid{display:grid;grid-template-columns:minmax(0,1.65fr) minmax(280px,1fr);gap:18px;align-items:stretch}
+.focus-grid>.ops-panel{padding:clamp(20px,2.4vw,32px);border-color:#40344d;background:linear-gradient(136deg,#201a2f 0%,#17151f 62%,#1b1727 100%);box-shadow:0 18px 52px #0000002b}
+.focus-grid>.ops-panel:hover{border-color:#6c5296}
+.focus-grid .ops-panel-heading{margin-bottom:26px}
+.focus-score-row{align-items:center;gap:clamp(20px,4vw,50px);margin:32px 0 30px}
+.focus-assessment .mini-gauge{width:192px;height:192px;flex:0 0 192px;padding:14px;box-shadow:0 0 50px #a16aff22}
+.focus-assessment .mini-gauge>div{background:#1b1825}
+.focus-assessment .mini-gauge strong{font-size:57px;font-weight:800}
+.focus-assessment .mini-gauge small{font-size:12px;color:#b8a7cb}
+.focus-assessment .assessment-copy h3{font-size:clamp(19px,2.6vw,31px);font-weight:750;letter-spacing:-.025em;margin-top:20px}
+.focus-assessment .assessment-copy p{font-size:14px;line-height:1.8;color:#c5b7d5}
+.focus-assessment .severity-pill{font-size:11px;padding:8px 12px}
+.focus-assessment .assessment-bottom{margin-top:4px;font-size:13px;color:#bfb0d1}
+.focus-assessment .outline-action{min-height:46px;margin-top:10px;width:auto;padding:0 20px;font-size:13px}
+.focus-score-note{font-size:12px;line-height:1.6;color:#a99eb9;margin:15px 0 12px}
+.focus-guidance{display:flex;flex-direction:column}
+.focus-recommendation-icon{display:grid;place-items:center;height:94px;width:94px;background:radial-gradient(circle,#442a6b,#241b36);border:1px solid #604785;box-shadow:0 0 55px #8f4add2a;border-radius:24px;margin:8px 0 24px;color:#d0a9ff}
+.focus-recommendation-icon svg{width:59px;height:59px}
+.focus-guidance-label{font-size:10px;letter-spacing:2px;font-weight:800;color:#bd98ee;margin:0 0 12px}
+.focus-recommendation-text{font-size:clamp(16px,1.6vw,20px);font-weight:630;line-height:1.6;color:#f5e9ff;margin:0 0 30px;overflow-wrap:anywhere}
+.focus-guidance-foot{margin-top:auto;padding-top:18px;border-top:1px solid #44394f;color:#b5a9c1;font-size:12px;line-height:1.75}
+.focus-findings{margin-top:18px;padding:clamp(20px,2.4vw,30px);background:#17141f;border-color:#40364b}
+.focus-findings .ops-panel-heading{margin-bottom:17px}
+.focus-findings .ops-hint{font-size:13px;color:#bbb1c8;margin-bottom:20px}
+.focus-findings .finding-cards{grid-template-columns:repeat(2,minmax(0,1fr));gap:13px}
+.focus-findings .finding-card{background:linear-gradient(135deg,#241a34,#1b1726);border:1px solid #49365f;border-radius:13px;min-width:0}
+.focus-findings .finding-card summary{min-height:62px;font-size:14px;padding:16px 18px}
+.focus-findings .finding-card summary strong{color:#ffb5c2;background:#402433;font-size:11px}
+.focus-findings .finding-card p{font-size:13px;line-height:1.75;color:#cabbd4;padding:0 18px 18px 32px}
+.focus-history{margin-top:18px;background:#17151d;border:1px solid #39313f;border-radius:13px;overflow:hidden}
+.focus-history>summary{cursor:pointer;min-height:68px;padding:15px 22px;display:flex;align-items:center;justify-content:space-between;gap:14px;list-style:none;color:#ded4ed;font-weight:730}
+.focus-history>summary::-webkit-details-marker{display:none}
+.focus-history>summary>span:first-child{display:flex;align-items:center;flex-wrap:wrap;gap:10px}
+.focus-history>summary small{font-size:11px;color:#9e94ac;font-weight:500}
+.focus-history-icon{color:#be95fc}
+.focus-history-chevron{color:#bea0e3;font-size:22px;transition:transform .18s}
+.focus-history[open] .focus-history-chevron{transform:rotate(180deg)}
+.focus-history-content{border-top:1px solid #38303e;padding:14px 18px 20px}
+.focus-history-content>.outline-action{display:block;margin-left:auto;min-height:38px}
+.focus-history-content .table-scroll{margin-top:12px}
+.focus-disclaimer{max-width:960px;margin:26px auto 0;color:#9d91ab;font-size:11px;line-height:1.7;text-align:center}
+@media(max-width:1050px){.focus-grid{grid-template-columns:1fr}.focus-guidance{min-height:250px}.focus-recommendation-icon{height:64px;width:64px;margin:0 0 20px;border-radius:15px}.focus-recommendation-icon svg{width:42px;height:42px}.focus-guidance .focus-guidance-foot{margin-top:18px}}
+@media(max-width:700px){.focused-main{padding:28px 16px 92px}.focused-intro{align-items:flex-start;gap:14px;flex-wrap:wrap}.focused-intro h1{font-size:36px}.focused-intro .command-scan-cta{min-height:44px}.focus-grid>.ops-panel,.focus-findings{padding:18px}.focus-assessment .mini-gauge{width:138px;height:138px;flex:0 0 138px;padding:10px}.focus-assessment .mini-gauge strong{font-size:40px}.focus-score-row{gap:15px;align-items:flex-start}.focus-assessment .assessment-copy h3{font-size:19px;margin-top:12px}.focus-findings .finding-cards{grid-template-columns:1fr}.focus-history>summary{padding:16px}.focus-privacy{font-size:11px}}
+@media(max-width:400px){.focus-score-row{flex-direction:column;align-items:center;text-align:center}.focus-assessment .assessment-copy{text-align:center}.focus-assessment .assessment-bottom{flex-wrap:wrap}.focus-recommendation-text{font-size:17px}}
+@media(prefers-reduced-motion:reduce){.focus-history-chevron{transition:none}}
+/* Override legacy dashboard grid spans retained for backwards-compatible styles. */
+.focus-grid>.ops-panel{grid-column:auto;min-width:0}

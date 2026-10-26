@@ -2,9 +2,9 @@
 
 # CyberGuard
 
-### Scan links. Watch the signals. Understand the risk.
+### Scan links. Understand the risk. Take action.
 
-**An explainable URL & QR security scanner with cinematic motion, offline reference-based RAG and optional opt-in Claude AI explanations.**
+**An explainable URL & QR security scanner with cinematic motion and a focused, actionable security report. Optional RAG and Claude API endpoints are available to developers, but not displayed in the Dashboard.**
 
 [![Python](https://img.shields.io/badge/Python-3.11%2B-3776AB?logo=python&logoColor=white)](https://www.python.org/)
 [![Flask](https://img.shields.io/badge/Flask-3.x-8A5BD9?logo=flask&logoColor=white)](https://flask.palletsprojects.com/)
@@ -23,7 +23,7 @@
 |:---:|:---:|
 | ![URL and QR scanner](assets/scanner.jpg) | ![Particle-based scanning transition](assets/scan-animation.jpg) |
 
-**1. Scan → 2. Visualize → 3. Investigate → 4. Optional evidence-grounded Claude explanation.** Enter a URL or upload a QR image. While the local API examines the input, an animated blue-violet particle field forms an orbital double helix. The animation has **no fabricated percent-complete indicator** and does not claim to represent a trained AI model. After the actual API result returns, you are taken to the **separate security dashboard**.
+**1. Scan → 2. Visualize → 3. Investigate.** Enter a URL or upload a QR image. While the local API examines the input, an animated blue-violet particle field forms an orbital double helix. The animation has **no fabricated percent-complete indicator** and does not claim to represent a trained AI model. After the actual API result returns, you are taken to the **separate security dashboard**.
 
 ## Quick start — Windows / VS Code
 
@@ -59,7 +59,7 @@ $env:ANTHROPIC_API_KEY = [System.Net.NetworkCredential]::new('', $secure).Passwo
 .\RUN.bat
 ```
 
-3. Scan any URL or QR using the normal Scanner. On the Dashboard, look for **CyberGuard AI Intelligence**. Offline RAG sources display automatically. To make a paid API call, **check the consent checkbox** and click **Ask Claude to explain this scan**.
+3. The focused Dashboard intentionally has **no Claude panel or AI consent controls**. The Claude endpoint remains available to developers, but must be called through the authenticated local API with a valid signed scan token and `consent: true`. No external request is sent when using the Dashboard.
 4. `Ctrl+C` stops the server. To clear the temporary key from the terminal after stopping:
 
 ```powershell
@@ -76,7 +76,7 @@ A request to Anthropic contains a **hostname**, HTTP/HTTPS scheme, original heur
 
 ### How RAG works
 
-`security_knowledge.py` implements **actual local retrieval**: it matches the analyzer's verified indicator IDs against short hand-curated reference summaries linked to the FTC, CISA and OWASP publications. The relevant excerpts are sent as grounded context if the user requests Claude. This is a small **offline rule-keyed RAG index**, not a vector database or a live threat feed. Original sources are displayed as clickable, inspectable references.
+`security_knowledge.py` implements **actual local retrieval**: it matches the analyzer's verified indicator IDs against short hand-curated reference summaries linked to the FTC, CISA and OWASP publications. The relevant excerpts are sent as grounded context if the user requests Claude. This is a small **offline rule-keyed RAG index**, not a vector database or a live threat feed. The API returns source titles and URLs to the caller. References are not displayed on the simplified Dashboard.
 
 ### API endpoints added
 
@@ -93,13 +93,18 @@ python -m pip install -r requirements.txt
 python app.py
 ```
 
+
+### Why the dashboard is intentionally minimal
+
+The post-scan page shows only the selected scan, its actual risk indicators, a next-step recommendation and optional previous-scan history. Repeated severity summaries, charts, session statistics and the Claude card were removed from the **interface** to reduce distraction. The existing Claude/RAG **backend endpoints remain available** for future development, but the dashboard does not call them. AI requests are never sent from this dashboard.
+
 ## What it does
 
-- **Two dedicated pages:** Scanner (`/`) and Security Dashboard (`/dashboard`).
+- **Two dedicated pages:** Scanner (`/`) and focused Security Results (`/dashboard`).
 - **Explainable phishing indicators:** Looks for numeric IP hosts, lookalike domains, suspicious brand references, URL shorteners, punycode, deep subdomains, account-action wording, HTTP and unusual ports.
 - **QR image decoding:** Validates and reads a single QR code from PNG, JPG or WebP, maximum 5 MB.
 - **Motion design:** Responsive particle animation with indeterminate activity state, keyboard-accessible cancel button and reduced-motion support.
-- **Session analytics:** Severity cards, trend chart, risk distribution, active indicators, recent activity and JSON export based on **actual scans in the current browser tab**.
+- **Focused results:** One genuine risk score, the affected hostname, detected indicators, a practical recommendation, and JSON export. Prior scans are accessible in an optional collapsed section.
 - **Privacy by design:** No requests to submitted websites. Session history keeps a short-lived signed evidence token plus hostnames and scores, but not full URL paths or queries. Only explicit Claude consent triggers the outbound model API request. No trackers or external CDN dependencies.
 - **RAG security evidence:** Retrieved official FTC/CISA/OWASP guidance is matched to active rule indicators, without fetching websites.
 - **Optional Claude API:** User-initiated, consent-gated explanation with server-side credentials; it cannot overwrite scores or invent calibrated confidence.
@@ -113,7 +118,7 @@ analyzer.py               Offline URL parser + deterministic scoring
 qr.py                     QR image decoding and validation
 templates/index.html      Scanner screen + motion overlay
 templates/dashboard.html  Post-scan security dashboard
-static/app.js             Scanning interactions, particle renderer and charts
+static/app.js             Scanning interactions, particle renderer and focused results
 static/styles.css         Responsive visual system
 RUN.bat                   One-click Windows startup
 tests/test_app.py         Automated integration and security checks
