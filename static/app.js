@@ -42,7 +42,7 @@ function writeHistory(items) {
     return false;
   }
 }
-function addScan(result, inputType) {
+function addScan(result, inputType, aiContextToken) {
   const indicators = Array.isArray(result.indicators) ? result.indicators : [];
   const sanitizedIndicators = indicators.filter(item => item && item.active).slice(0, 12).map(item => ({
     key: safeText(item.key, 50),
@@ -58,6 +58,7 @@ function addScan(result, inputType) {
     recommendation: safeText(result.recommendation, 500),
     type: inputType === 'QR' ? 'QR' : 'URL',
     indicators: sanitizedIndicators,
+    ai_context_token: safeText(aiContextToken, 2000),
     at: new Date().toISOString(),
   };
   // A full submitted URL is deliberately never saved, including paths or query strings.
@@ -234,7 +235,7 @@ function initScanner() {
       transition?.completed();
       if (!transition?.reducedMotion) await new Promise(resolve => window.setTimeout(resolve, 380));
       if (cancelled) return;
-      if (!addScan(data.result, mode)) throw new Error('Browser session storage is unavailable. Please allow session storage and try again.');
+      if (!addScan(data.result, mode, data.ai_context_token)) throw new Error('Browser session storage is unavailable. Please allow session storage and try again.');
       announce('Scan finished. Opening dashboard.');
       window.location.assign('/dashboard');
     } catch (exception) {
@@ -502,9 +503,127 @@ function renderTable(history, onSelect) {
     details.append(button); tr.append(domain, type, indicator, risk, score, time, details); tbody.append(tr);
   });
 }
+/* Evidence enrichment: local RAG works without AI credentials. A separate explicit
+   user action with checkbox consent is required for each Claude API invocation. */
+function initAIInsights(getSelection) {
+  const refs = $('ragReferences');
+  if (!refs) return {select: () => {}};
+  const button = $('aiExplainButton');
+  const checkbox = $('aiConsent');
+  const feedback = $('aiFeedback');
+  const service = $('aiServiceStatus');
+  const answer = $('aiAnswer');
+  let configured = false;
+  let currentToken = '';
+  let sequence = 0;
+  let pending = false;
+
+  const feedbackText = message => {feedback.textContent = message; announce(message);};
+  const updateButton = () => {button.disabled = pending || !configured || !currentToken || !checkbox.checked;};
+  const clearAnswer = () => {answer.hidden = true; $('aiSummary').textContent = ''; $('aiActions').replaceChildren();};
+
+  function showReferences(data) {
+    refs.replaceChildren();
+    const coverage = data && data.evidence_coverage;
+    $('ragCoverage').textContent = coverage ? `${coverage.matched_flags} of ${coverage.active_flags} rule flags matched to guidance` : 'No evidence';
+    if (!data || !Array.isArray(data.documents) || !data.documents.length) {
+      const p=document.createElement('p');p.className='ai-empty';p.textContent='No relevant local knowledge found.';refs.append(p);return;
+    }
+    data.documents.forEach(doc => {
+      const item=document.createElement('div');item.className='ai-reference';
+      const top=document.createElement('div');top.className='ai-reference-top';
+      const title=document.createElement('strong');title.textContent=safeText(doc.title,145);
+      const source=document.createElement('span');source.textContent=safeText(doc.source,92);
+      top.append(title,source);
+      const description=document.createElement('p');description.textContent=safeText(doc.text,400);
+      const link=document.createElement('a');link.textContent='Read original guidance ↗';
+      const url=safeText(doc.url,400);
+      if(/^https:\/\/(?:consumer\.ftc\.gov|www\.cisa\.gov|cheatsheetseries\.owasp\.org)\//.test(url)) {
+        link.href=url; link.target='_blank';link.rel='noopener noreferrer';
+      } else { link.textContent='Reference unavailable'; }
+      item.append(top,description,link);refs.append(item);
+    });
+  }
+  function resetSelection() {
+    currentToken = '';
+    sequence += 1;
+    checkbox.checked = false;
+    clearAnswer();
+    refs.replaceChildren();
+    const p=document.createElement('p');p.className='ai-empty';p.textContent='Scan a URL or QR to see related published guidance.';refs.append(p);
+    $('ragCoverage').textContent='Run a scan first';
+    feedbackText('Select a completed scan to retrieve guidance.');
+    updateButton();
+  }
+  async function select(record) {
+    if (!record || !record.ai_context_token) { resetSelection(); return; }
+    currentToken = record.ai_context_token;
+    const order=++sequence;
+    checkbox.checked = false;
+    clearAnswer();
+    refs.replaceChildren();
+    const msg=document.createElement('p');msg.className='ai-empty';msg.textContent='Retrieving local reference guidance…';refs.append(msg);
+    $('ragCoverage').textContent='Matching rule flags…';
+    updateButton();
+    try {
+      const response=await fetch('/api/ai/knowledge',{
+        method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({token:currentToken})
+      });
+      const payload=await response.json();
+      if (order!==sequence) return;
+      if(!response.ok || !payload.success)throw new Error(safeText(payload.message,190)||'Knowledge retrieval failed.');
+      showReferences(payload.result);
+      feedbackText(configured ? 'Official reference guidance is ready. Claude requires explicit consent.' : 'Reference guidance ready. Add an Anthropic API key on the server to enable Claude.');
+    } catch(error) {
+      if(order!==sequence)return;
+      showReferences(null); $('ragCoverage').textContent='Retrieval unavailable';
+      feedbackText(error.message||'Knowledge retrieval failed. Start a fresh scan.');
+    }
+  }
+  checkbox.addEventListener('change',updateButton);
+  button.addEventListener('click', async () => {
+    if (!configured || !checkbox.checked || !currentToken || pending) return;
+    const token = currentToken;
+    const order = sequence;
+    pending=true;updateButton();clearAnswer(); feedbackText('Claude is generating an explanation. Your local risk score will not change.');
+    try {
+      const response=await fetch('/api/ai/assess',{
+        method:'POST',headers:{'Content-Type':'application/json'},
+        body:JSON.stringify({token,consent:true})
+      });
+      const data=await response.json();
+      if(order!==sequence)return;
+      if (!response.ok || !data.success || !data.result) throw new Error(safeText(data.message,210)||'Claude analysis failed.');
+      const result=data.result;
+      $('aiSummary').textContent=safeText(result.summary,450);
+      const actions=$('aiActions');actions.replaceChildren();
+      (Array.isArray(result.recommendations)?result.recommendations:[]).slice(0,3).forEach(action=>{
+        const li=document.createElement('li');li.textContent=safeText(action,280);actions.append(li);
+      });
+      $('aiLimitations').textContent=safeText(result.limitations,350);
+      answer.hidden=false;
+      feedbackText(`Claude explanation received (${safeText(result.model,75)}). This is not a verified detection or calibrated probability.`);
+    } catch(error) {
+      if(order!==sequence)return;
+      feedbackText(error.message||'Claude could not respond. Local analysis remains available.');
+    } finally {pending=false;updateButton();}
+  });
+  fetch('/api/ai/status').then(r=>r.json()).then(info=>{
+    configured=!!info.claude_configured;
+    service.textContent = configured ? `Claude configured · ${safeText(info.model,80)} · optional` : 'Claude not configured · offline RAG available';
+    updateButton();
+    if(configured)feedback.textContent='Check the consent box to enable the Claude explanation button.';
+  }).catch(()=>{
+    service.textContent='Claude status unavailable · local scanner still works';updateButton();
+  });
+  resetSelection();
+  return {select};
+}
+
 function initDashboard() {
   let history = readHistory();
   let selected = history.length - 1;
+  const aiInsights = initAIInsights(() => history[selected] || null);
   function render() {
     history = readHistory();
     const counts = {HIGH: 0, ELEVATED: 0, LOW: 0};
@@ -517,8 +636,9 @@ function initDashboard() {
     renderTimeline(history); renderSeverityBars(history); renderDonut(counts); renderSignals(history); renderIncidentFeed(history);
     if (selected >= history.length) selected = history.length - 1;
     renderAssessment(history[selected] || null);
+    aiInsights.select(history[selected] || null);
     renderTable(history, index => {
-      selected = index; renderAssessment(history[selected]);
+      selected = index; renderAssessment(history[selected]); aiInsights.select(history[selected]);
       $('assessmentHeading').textContent = 'Selected assessment';
       document.querySelector('.assessment-widget').scrollIntoView({behavior: 'smooth', block: 'center'});
       announce(`Now inspecting ${history[selected].hostname}`);

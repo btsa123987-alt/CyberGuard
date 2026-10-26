@@ -286,3 +286,20 @@ body{background:radial-gradient(ellipse 780px 480px at 77% 5%,rgba(79,36,177,.22
 @media(prefers-reduced-motion:reduce){.holo-qr,.holo-halo,.holo-orbit,.qr-cinematic-stage .art-glow,.holo-beam{animation:none!important;transition:none!important}}
 
 .recommendation-copy{margin-top:11px!important;padding:12px 14px;background:#09263a;border:1px solid #22627d;border-radius:9px;color:#bcecff!important;font-size:12px;line-height:1.65}
+
+
+/* AI + evidence retrieval — follows the same compact CyberGuard command UI. */
+.ai-analysis-widget{position:relative;overflow:hidden;border-color:#315379!important;background:linear-gradient(155deg,#101b33,#090f21 70%,#16102b)!important}
+.ai-analysis-widget:before{content:"";position:absolute;right:-65px;top:-120px;width:240px;height:240px;background:radial-gradient(circle,#7963ff1b,transparent 70%);pointer-events:none}
+.ai-live-tag{font:700 9px/1.4 Consolas,monospace;color:#7de5ff;letter-spacing:1px;border:1px solid #2c5871;background:#071f31;padding:5px 8px;border-radius:6px}
+.ai-service-line{display:flex;align-items:center;gap:9px;color:#bdcfe9;font-size:12px;margin:12px 0}.ai-orb{width:8px;height:8px;border-radius:50%;background:#60d4ff;box-shadow:0 0 15px #60d4ff}
+.ai-capability-grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:10px;margin:18px 0}.ai-capability-grid>div{border:1px solid #2a3c5b;border-radius:11px;padding:13px;display:grid;gap:6px;background:#080f2090}
+.ai-capability-grid strong{font-size:12px;color:#e4eaff;overflow-wrap:anywhere}.ai-capability-grid small{font-size:10px;color:#a7bad7}.ai-capability-label,.ai-answer-label{font:700 9px/1.4 Consolas,monospace;letter-spacing:1px;color:#8ccfff}
+.ai-reference-head{display:flex;align-items:center;justify-content:space-between;gap:12px;flex-wrap:wrap;border-top:1px solid #293b55;padding-top:16px}.ai-reference-head h3{font-size:13px;margin:0}.ai-reference-head span{font-size:10px;color:#91aacc}
+.ai-references{display:grid;gap:10px;margin:12px 0 17px}.ai-reference{background:#09152ae0;border:1px solid #263a60;border-radius:12px;padding:14px;transition:border-color .2s}.ai-reference:hover{border-color:#6f6ace}
+.ai-reference-top{display:flex;justify-content:space-between;gap:12px;align-items:flex-start;flex-wrap:wrap}.ai-reference-top strong{font-size:12px;line-height:1.4;color:#f1f6ff;flex:1 1 160px}.ai-reference-top span{font-size:10px;color:#7acbff}.ai-reference p,.ai-empty{font-size:11px;line-height:1.7;color:#bac7df;overflow-wrap:anywhere}.ai-reference a{font-size:11px;color:#7adeff;display:inline-block;padding:5px 0;text-underline-offset:4px}
+.ai-consent-area{border-top:1px solid #293b55;padding-top:16px}.ai-consent{display:flex;gap:10px;font-size:11px;line-height:1.65;color:#c6d2e8;cursor:pointer}.ai-consent input{width:17px;height:17px;flex:0 0 17px;accent-color:#8d61ff;margin-top:2px}.ai-consent strong{color:#f1f7ff}
+.ai-explain-button{margin:14px 0 6px;min-height:45px;width:100%;border:1px solid #699be6;border-radius:10px;color:white;background:linear-gradient(105deg,#268bdc,#6548d0);font-size:13px;font-weight:700;cursor:pointer;box-shadow:0 8px 22px #2d56bc28;transition:filter .2s,box-shadow .2s}
+.ai-explain-button:hover:not(:disabled){filter:brightness(1.13);box-shadow:0 10px 26px #4b65fb55}.ai-explain-button:disabled{opacity:.45;cursor:not-allowed;box-shadow:none}
+.ai-feedback,.ai-privacy-note{font-size:11px;line-height:1.65;color:#adbfdd;overflow-wrap:anywhere}.ai-answer{border:1px solid #5164b0;background:#131b3c;border-radius:12px;padding:17px;margin:12px 0}.ai-answer p,.ai-answer li{font-size:12px;line-height:1.7;color:#e1eaff}.ai-answer h3{font-size:12px;margin-top:13px}.ai-answer ul{padding-left:21px}.ai-answer .ai-limits{font-size:11px;color:#afc1dc}
+@media(max-width:580px){.ai-capability-grid{grid-template-columns:1fr}.ai-live-tag{font-size:8px}.ai-reference-top{gap:5px}}

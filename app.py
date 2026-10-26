@@ -9,12 +9,14 @@ from collections import deque
 from threading import Lock
 import os
 import time
+import secrets
 
 from flask import Flask, jsonify, render_template, request
 from werkzeug.exceptions import HTTPException
 
 from analyzer import URLValidationError, analyze
 from qr import ImageValidationError, QRNotFoundError, MAX_IMAGE_BYTES, decode_qr
+from ai_assistant import AIError, create_token, verify_token, knowledge_for, explain_with_claude, claude_ready, DEFAULT_MODEL
 
 
 def create_app(config: dict | None = None) -> Flask:
@@ -27,6 +29,7 @@ def create_app(config: dict | None = None) -> Flask:
     )
     if config:
         app.config.update(config)
+    signing_secret = secrets.token_bytes(32)
 
     recent: dict[str, deque[float]] = {}
     lock = Lock()
@@ -72,7 +75,7 @@ def create_app(config: dict | None = None) -> Flask:
 
     @app.get("/api/health")
     def health():
-        return jsonify(status="ok", service="CyberGuard", mode="offline-heuristics")
+        return jsonify(status="ok", service="CyberGuard", mode="offline-heuristics", ai_optional=True)
 
     @app.post("/api/analyze/url")
     def analyze_url():
@@ -82,7 +85,8 @@ def create_app(config: dict | None = None) -> Flask:
         if not isinstance(data, dict):
             return jsonify(error="invalid_json", message="Expected a JSON object."), 400
         try:
-            return jsonify(success=True, result=analyze(data.get("url")))
+            result = analyze(data.get("url"))
+            return jsonify(success=True, result=result, ai_context_token=create_token(signing_secret, result, "URL"))
         except URLValidationError as exc:
             return jsonify(error="invalid_url", message=str(exc)), 400
 
@@ -94,13 +98,49 @@ def create_app(config: dict | None = None) -> Flask:
         if len(raw) > MAX_IMAGE_BYTES:
             return jsonify(error="image_too_large", message="The image must be under 5 MB."), 413
         try:
-            return jsonify(success=True, result=analyze(decode_qr(raw)))
+            result = analyze(decode_qr(raw))
+            return jsonify(success=True, result=result, ai_context_token=create_token(signing_secret, result, "QR"))
         except QRNotFoundError as exc:
             return jsonify(error="qr_not_found", message=str(exc)), 422
         except ImageValidationError as exc:
             return jsonify(error="invalid_image", message=str(exc)), 400
         except URLValidationError as exc:
             return jsonify(error="qr_not_url", message=str(exc)), 422
+
+    @app.get("/api/ai/status")
+    def ai_status():
+        return jsonify(claude_configured=claude_ready(), model=(os.environ.get("CLAUDE_MODEL") or DEFAULT_MODEL) if claude_ready() else None,
+                       rag_enabled=True, confidence_status="not_calibrated", remote_processing_opt_in=True)
+
+    @app.post("/api/ai/knowledge")
+    def ai_knowledge():
+        if not request.is_json:
+            return jsonify(error="invalid_content_type", message="Send application/json."), 415
+        data = request.get_json(silent=True)
+        if not isinstance(data, dict):
+            return jsonify(error="invalid_json", message="Expected a JSON object."), 400
+        try:
+            context = verify_token(signing_secret, data.get("token"))
+            return jsonify(success=True, result=knowledge_for(context))
+        except AIError as exc:
+            return jsonify(error="invalid_scan_context", message=str(exc)), exc.status
+
+    @app.post("/api/ai/assess")
+    def ai_assess():
+        if not request.is_json:
+            return jsonify(error="invalid_content_type", message="Send application/json."), 415
+        data = request.get_json(silent=True)
+        if not isinstance(data, dict):
+            return jsonify(error="invalid_json", message="Expected a JSON object."), 400
+        if data.get("consent") is not True:
+            return jsonify(error="consent_required", message="Explicit consent is required before using Claude."), 403
+        try:
+            context = verify_token(signing_secret, data.get("token"))
+            knowledge = knowledge_for(context)
+            result = explain_with_claude(context, knowledge)
+            return jsonify(success=True, result=result)
+        except AIError as exc:
+            return jsonify(error="claude_unavailable" if exc.status >= 500 else "invalid_scan_context", message=str(exc)), exc.status
 
     @app.errorhandler(HTTPException)
     def http_error(error):
