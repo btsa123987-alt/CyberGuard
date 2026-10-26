@@ -21,7 +21,7 @@ def test_home_and_english(client):
     assert response.status_code == 200
     text = response.get_data(as_text=True)
     assert '<html lang="en" dir="ltr">' in text
-    assert "SCAN BEFORE" in text and "YOU TRUST." in text
+    assert "Security starts" in text
     assert "Scan a QR code" in text
 
 
@@ -32,10 +32,10 @@ def test_dashboard_is_separate_page(client):
     body = dashboard.get_data(as_text=True)
     assert '<body data-page="scanner">' in scanner
     assert '<body data-page="dashboard">' in body
-    assert "Risk score timeline" in body
-    assert "Recent activity" in body
+    assert "Security <span>assessment.</span>" in body
+    assert "Previous scans" in body
     assert "Scan a URL" in scanner
-    assert "Risk score timeline" not in scanner
+    assert "Why this result?" not in scanner
 
 
 def test_security_headers(client):
@@ -114,22 +114,23 @@ def test_english_ui_only():
     assert "fetch(endpoint, opts)" in js
 
 
-def test_pro_max_dashboard_contract():
-    """Post-scan dashboard stays separate and renders from actual session scans."""
+def test_focused_dashboard_contract():
+    """The scan-focused UI keeps functionality without distracting analytics widgets."""
     root = Path(__file__).parents[1]
     html = (root / "templates/dashboard.html").read_text(encoding="utf-8")
     js = (root / "static/app.js").read_text(encoding="utf-8")
     css = (root / "static/styles.css").read_text(encoding="utf-8")
-    assert 'id="severityChart"' in html
-    assert 'id="incidentList"' in html
-    assert 'id="trendChart"' in html
-    assert 'id="riskDonut"' in html
-    assert "renderSeverityBars(history)" in js
-    assert "renderIncidentFeed(history)" in js
+    for item in ('id="assessmentScore"', 'id="assessmentRecommendation"',
+                 'id="findingCards"', 'id="downloadReport"',
+                 'id="activityBody"', 'id="clearHistory"'):
+        assert item in html
+    for removed in ('Severity summary', 'Threat intelligence', 'Session snapshot',
+                    'CyberGuard AI Intelligence', 'Risk distribution', 'Latest scans'):
+        assert removed not in html
+    assert '<details class="focus-history"' in html
     assert "sessionStorage" in js
-    assert "@media(max-width:580px)" in css
-    assert "prefers-reduced-motion" in css
-    assert (root / "STYLE_GUIDE.md").is_file()
+    assert "function renderAssessment" in js
+    assert 'prefers-reduced-motion' in css
 
 
 def test_motion_screen_is_connected_to_real_scan_flow():

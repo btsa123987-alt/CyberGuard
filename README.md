@@ -2,7 +2,7 @@
 
 # CyberGuard
 
-### Scan links. Watch the signals. Understand the risk.
+### Scan links. Understand the risk. Take action.
 
 **An explainable URL & QR security scanner with cinematic motion, offline reference-based RAG and optional opt-in Claude AI explanations.**
 
@@ -95,11 +95,11 @@ python app.py
 
 ## What it does
 
-- **Two dedicated pages:** Scanner (`/`) and Security Dashboard (`/dashboard`).
+- **Two dedicated pages:** Scanner (`/`) and focused Security Results (`/dashboard`).
 - **Explainable phishing indicators:** Looks for numeric IP hosts, lookalike domains, suspicious brand references, URL shorteners, punycode, deep subdomains, account-action wording, HTTP and unusual ports.
 - **QR image decoding:** Validates and reads a single QR code from PNG, JPG or WebP, maximum 5 MB.
 - **Motion design:** Responsive particle animation with indeterminate activity state, keyboard-accessible cancel button and reduced-motion support.
-- **Session analytics:** Severity cards, trend chart, risk distribution, active indicators, recent activity and JSON export based on **actual scans in the current browser tab**.
+- **Focused results:** One genuine risk score, the affected hostname, detected indicators, a practical recommendation, and JSON export. Prior scans are accessible in an optional collapsed section.
 - **Privacy by design:** No requests to submitted websites. Session history keeps a short-lived signed evidence token plus hostnames and scores, but not full URL paths or queries. Only explicit Claude consent triggers the outbound model API request. No trackers or external CDN dependencies.
 - **RAG security evidence:** Retrieved official FTC/CISA/OWASP guidance is matched to active rule indicators, without fetching websites.
 - **Optional Claude API:** User-initiated, consent-gated explanation with server-side credentials; it cannot overwrite scores or invent calibrated confidence.
@@ -154,3 +154,7 @@ The dashboard's visual language was informed by [UI/UX Pro Max](https://github.c
 ## License
 
 [MIT](LICENSE).
+
+### Why the dashboard is intentionally minimal
+
+The post-scan page shows only the selected scan, its actual risk indicators, a next-step recommendation and optional previous-scan history. Repeated severity summaries, charts, session statistics and the Claude card were removed from the **interface** to reduce distraction. The existing Claude/RAG **backend endpoints remain available** for future development, but the dashboard does not call them. AI requests are never sent from this dashboard.
