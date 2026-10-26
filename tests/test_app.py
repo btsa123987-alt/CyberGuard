@@ -21,7 +21,7 @@ def test_home_and_english(client):
     assert response.status_code == 200
     text = response.get_data(as_text=True)
     assert '<html lang="en" dir="ltr">' in text
-    assert "Security starts" in text
+    assert "SCAN BEFORE" in text and "YOU TRUST." in text
     assert "Scan a QR code" in text
 
 
