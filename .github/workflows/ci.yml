@@ -16,7 +16,7 @@ jobs:
       - name: Install packages
         run: python -m pip install -r requirements.txt pytest qrcode[pil]
       - name: Check syntax
-        run: python -m compileall -q app.py analyzer.py qr.py ai_assistant.py security_knowledge.py
+        run: python -m compileall -q app.py analyzer.py qr.py ai_assistant.py security_knowledge.py explainability.py
       - name: Check JavaScript syntax
         run: node --check static/app.js
       - name: Run tests

@@ -32,8 +32,8 @@ def test_dashboard_is_separate_page(client):
     body = dashboard.get_data(as_text=True)
     assert '<body data-page="scanner">' in scanner
     assert '<body data-page="dashboard">' in body
-    assert "Security <span>assessment.</span>" in body
-    assert "Previous scans" in body
+    assert "See beyond <span>the score.</span>" in body
+    assert "Scan history" in body
     assert "Scan a URL" in scanner
     assert "Why this result?" not in scanner
 
@@ -69,6 +69,8 @@ def test_url_endpoint(client):
     assert r.status_code == 200
     assert r.json["result"]["risk_level"] == "HIGH"
     assert r.json["result"]["score_type"] == "uncalibrated_heuristic_points"
+    assert r.json["result"]["explainability"]["method"] == "exact_shapley_values"
+    assert sum(row["shap_value"] for row in r.json["result"]["explainability"]["features"]) == pytest.approx(54)
 
 
 def test_invalid_url_endpoint(client):
@@ -83,6 +85,7 @@ def test_qr_endpoint(client):
     response = client.post("/api/analyze/qr", data={"image": (io.BytesIO(data.getvalue()), "qr.png")}, content_type="multipart/form-data")
     assert response.status_code == 200
     assert response.json["result"]["hostname"] == "example.com"
+    assert response.json["result"]["explainability"]["score"] == 0
 
 
 def test_invalid_image(client):
@@ -114,23 +117,26 @@ def test_english_ui_only():
     assert "fetch(endpoint, opts)" in js
 
 
-def test_focused_dashboard_contract():
-    """The scan-focused UI keeps functionality without distracting analytics widgets."""
+def test_intelligence_studio_contract():
+    """Five genuine data views with no fabricated scores or inline third-party code."""
     root = Path(__file__).parents[1]
     html = (root / "templates/dashboard.html").read_text(encoding="utf-8")
     js = (root / "static/app.js").read_text(encoding="utf-8")
     css = (root / "static/styles.css").read_text(encoding="utf-8")
     for item in ('id="assessmentScore"', 'id="assessmentRecommendation"',
                  'id="findingCards"', 'id="downloadReport"',
-                 'id="activityBody"', 'id="clearHistory"'):
+                 'id="shapWaterfall"', 'id="contributionBars"',
+                 'id="ragReferences"', 'id="ragCoverage"', 'id="aiExplainButton"',
+                 'id="aiConsent"', 'id="trendChart"', 'id="activityBody"',
+                 'id="clearHistory"', 'role="tablist"'):
         assert item in html
-    for removed in ('Severity summary', 'Threat intelligence', 'Session snapshot',
-                    'CyberGuard AI Intelligence', 'Risk distribution', 'Latest scans'):
-        assert removed not in html
-    assert '<details class="focus-history"' in html
-    assert "sessionStorage" in js
-    assert "function renderAssessment" in js
+    assert 'function renderAttributions' in js
+    assert 'function fetchKnowledge' in js
+    assert "'/api/ai/knowledge'" in js
+    assert "'/api/ai/assess'" in js
+    assert 'sessionStorage' in js
     assert 'prefers-reduced-motion' in css
+    assert 'https://cdn.' not in html
 
 
 def test_motion_screen_is_connected_to_real_scan_flow():

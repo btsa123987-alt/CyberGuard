@@ -15,6 +15,7 @@ from flask import Flask, jsonify, render_template, request
 from werkzeug.exceptions import HTTPException
 
 from analyzer import URLValidationError, analyze
+from explainability import explain_score
 from qr import ImageValidationError, QRNotFoundError, MAX_IMAGE_BYTES, decode_qr
 from ai_assistant import AIError, create_token, verify_token, knowledge_for, explain_with_claude, claude_ready, DEFAULT_MODEL
 
@@ -86,6 +87,7 @@ def create_app(config: dict | None = None) -> Flask:
             return jsonify(error="invalid_json", message="Expected a JSON object."), 400
         try:
             result = analyze(data.get("url"))
+            result["explainability"] = explain_score(result)
             return jsonify(success=True, result=result, ai_context_token=create_token(signing_secret, result, "URL"))
         except URLValidationError as exc:
             return jsonify(error="invalid_url", message=str(exc)), 400
@@ -99,6 +101,7 @@ def create_app(config: dict | None = None) -> Flask:
             return jsonify(error="image_too_large", message="The image must be under 5 MB."), 413
         try:
             result = analyze(decode_qr(raw))
+            result["explainability"] = explain_score(result)
             return jsonify(success=True, result=result, ai_context_token=create_token(signing_secret, result, "QR"))
         except QRNotFoundError as exc:
             return jsonify(error="qr_not_found", message=str(exc)), 422
